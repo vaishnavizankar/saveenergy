@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+pydantic
+python-dotenv
+boto3
+reportlab
+apscheduler
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
+httpx
+websockets
+pandas
+matplotlib
+pydantic-settings
