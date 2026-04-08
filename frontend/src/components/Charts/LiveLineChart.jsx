@@ -6,10 +6,7 @@ import {
   XAxis, 
   YAxis, 
   CartesianGrid, 
-  Tooltip,
-  defs,
-  linearGradient,
-  stop
+  Tooltip
 } from 'recharts';
 
 const LiveLineChart = ({ data, color = "#16a34a", title, unit }) => {

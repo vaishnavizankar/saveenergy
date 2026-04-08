@@ -46,6 +46,23 @@ const Reports = () => {
     }
   };
 
+  const handleDownload = async (report) => {
+    try {
+      const response = await api.get(`/reports/download/${report.id}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${report.title}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("Download failed", err);
+    }
+  };
+
   return (
     <div className="pt-24 px-8 pb-12 fade-in">
       <div className="flex items-center justify-between mb-8">
@@ -102,7 +119,10 @@ const Reports = () => {
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-tighter">Status</p>
                   <p className="text-xs font-bold text-emerald-600">Generated & Signed</p>
                 </div>
-                <button className="p-4 bg-gray-50 text-gray-400 rounded-xl hover:bg-eco-100 hover:text-eco-600 transition-all border border-transparent hover:border-eco-200">
+                <button 
+                  onClick={() => handleDownload(report)}
+                  className="p-4 bg-gray-50 text-gray-400 rounded-xl hover:bg-eco-100 hover:text-eco-600 transition-all border border-transparent hover:border-eco-200"
+                >
                   <Download size={20} />
                 </button>
               </div>

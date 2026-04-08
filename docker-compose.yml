@@ -1,40 +1,30 @@
-version: '3.8'
+# ============================================================
+# SaveEnergy - Docker Compose (Local Frontend Dev Only)
+# 
+# Backend  → Hosted on AWS App Runner
+# Database → Hosted on AWS RDS
+# Frontend → Run locally for development, or deploy via S3/CloudFront
+# ============================================================
 
 services:
-  db:
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespassword
-      POSTGRES_DB: greenops
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  backend:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
-    restart: always
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgrespassword@db:5432/greenops
-      - SECRET_KEY=7b0b6d859a7f34c26a978f5a5e3c7d6e
-      - AWS_REGION=us-east-1
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: production
+      args:
+        # Points to AWS App Runner backend (update after terraform apply)
+        VITE_API_BASE_URL: "https://${APP_RUNNER_URL}/api/v1"
+        VITE_AWS_REGION: "us-east-1"
+        VITE_COGNITO_USER_POOL_ID: "us-east-1_GNxIumfQJ"
+        VITE_COGNITO_CLIENT_ID: "4n86iijadkp6lgcfuagp753oat"
+        VITE_COGNITO_DOMAIN: "saveenergy.auth.us-east-1.amazoncognito.com"
     ports:
       - "3000:3000"
-    depends_on:
-      - backend
-
-volumes:
-  postgres_data:
+    env_file:
+      - ./frontend/.env
+    deploy:
+      resources:
+        limits:
+          memory: 512M

@@ -1,0 +1,48 @@
+type ResourceMetric @aws_cognito_user_pools {
+  resource_id: ID!
+  name: String
+  type: String
+  cpu: Float!
+  carbon: Float!
+  timestamp: String!
+}
+
+type Recommendation @aws_cognito_user_pools {
+  recommendation_id: ID!
+  resource_id: String!
+  name: String
+  action: String!
+  description: String
+  potential_savings: Float
+  is_applied: Boolean!
+  created_at: String!
+}
+
+type Query {
+  listResources: [ResourceMetric] @aws_cognito_user_pools
+  getRecommendations: [Recommendation] @aws_cognito_user_pools
+}
+
+type Mutation {
+  publishMetric(
+    resource_id: ID!
+    name: String
+    type: String
+    cpu: Float!
+    carbon: Float!
+    timestamp: String!
+  ): ResourceMetric @aws_iam # Triggered by Lambda auditor
+  
+  applyRecommendation(recommendation_id: ID!): Recommendation @aws_cognito_user_pools
+}
+
+type Subscription {
+  onNewMetric(resource_id: ID): ResourceMetric
+    @aws_subscribe(mutations: ["publishMetric"])
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}

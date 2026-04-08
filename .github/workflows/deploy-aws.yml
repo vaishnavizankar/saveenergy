@@ -1,0 +1,52 @@
+name: Deploy SaveEnergy to AWS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    # --- INFRASTRUCTURE (TERRAFORM) ---
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Apply
+      run: |
+        cd aws_migration/terraform
+        terraform init
+        terraform apply -auto-approve
+
+    # --- BACKEND (LAMBDA) ---
+    - name: Package & Deploy Monitor Lambda
+      run: |
+        cd aws_migration/lambdas
+        zip monitor_resources.zip monitor_resources.py
+        aws lambda update-function-code --function-name SaveEnergy_MonitorPulse --zip-file fileb://monitor_resources.zip
+
+    - name: Package & Deploy Predictor Lambda
+      run: |
+        cd aws_migration/lambdas
+        zip waste_predictor.zip waste_predictor.py
+        aws lambda update-function-code --function-name SaveEnergy_WastePredictor --zip-file fileb://waste_predictor.zip
+
+    # --- FRONTEND (REACT to S3) ---
+    - name: Build & Deploy Frontend
+      run: |
+        cd frontend
+        npm install
+        npm run build
+        aws s3 sync dist/ s3://saveenergy-sustainability-frontend --delete
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DIST_ID }} --paths "/*"

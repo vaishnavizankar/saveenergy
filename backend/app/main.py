@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.session import engine, Base, SessionLocal
 from app.models.models import User, AWSResource, UserRole
+from app.models.aws_account import AWSAccount
 from app.core.security import get_password_hash
 from app.api.api import api_router
 from app.websocket.manager import manager
@@ -13,6 +14,10 @@ import uvicorn
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="GreenOps API", version="1.0.0")
+
+@app.get("/")
+async def root():
+    return {"message": "SaveEnergy API is running", "version": "1.0.0"}
 
 # CORS Setup
 app.add_middleware(
@@ -30,6 +35,7 @@ async def on_startup():
     db = SessionLocal()
     admin = db.query(User).filter(User.email == "admin@greenops.com").first()
     if not admin:
+        print("DEBUG: Creating admin user")
         admin_user = User(
             email="admin@greenops.com",
             hashed_password=get_password_hash("admin123"),
@@ -43,7 +49,7 @@ async def on_startup():
     res_count = db.query(AWSResource).count()
     if res_count == 0:
         from app.services.aws_service import aws_service
-        mock_data = aws_service.get_ec2_resources()
+        mock_data = aws_service.get_resources()
         for res in mock_data:
             new_res = AWSResource(
                 resource_id=res['id'],

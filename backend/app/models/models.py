@@ -23,6 +23,7 @@ class AWSResource(Base):
     __tablename__ = "resources"
     id = Column(Integer, primary_key=True, index=True)
     resource_id = Column(String, unique=True, index=True) # e.g. i-12345
+    account_id = Column(Integer, ForeignKey("aws_accounts.id"), nullable=True) 
     name = Column(String)
     type = Column(String) # EC2, RDS, S3
     status = Column(String) # Running, Stopped, Idle

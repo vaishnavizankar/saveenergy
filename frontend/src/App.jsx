@@ -5,53 +5,25 @@ import Dashboard from './pages/Dashboard';
 import Resources from './pages/Resources';
 import Carbon from './pages/Carbon';
 import Cost from './pages/Cost';
-import Login from './pages/Login';
 import Recommendations from './pages/Recommendations';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
-
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  if (!token) return <Navigate to="/login" replace />;
-  return <Layout>{children}</Layout>;
-};
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        {/* All routes wrapped in Layout individually for stability in 'Open Mode' */}
+        <Route path="/" element={<Layout><Dashboard /></Layout>} />
+        <Route path="/resources" element={<Layout><Resources /></Layout>} />
+        <Route path="/carbon" element={<Layout><Carbon /></Layout>} />
+        <Route path="/cost" element={<Layout><Cost /></Layout>} />
+        <Route path="/recommendations" element={<Layout><Recommendations /></Layout>} />
+        <Route path="/reports" element={<Layout><Reports /></Layout>} />
+        <Route path="/settings" element={<Layout><Settings /></Layout>} />
         
-        <Route path="/" element={
-          <ProtectedRoute><Dashboard /></ProtectedRoute>
-        } />
-        
-        <Route path="/resources" element={
-          <ProtectedRoute><Resources /></ProtectedRoute>
-        } />
-        
-        <Route path="/carbon" element={
-          <ProtectedRoute><Carbon /></ProtectedRoute>
-        } />
-        
-        <Route path="/cost" element={
-          <ProtectedRoute><Cost /></ProtectedRoute>
-        } />
-
-        <Route path="/recommendations" element={
-          <ProtectedRoute><Recommendations /></ProtectedRoute>
-        } />
-
-        <Route path="/reports" element={
-          <ProtectedRoute><Reports /></ProtectedRoute>
-        } />
-
-        <Route path="/settings" element={
-          <ProtectedRoute><Settings /></ProtectedRoute>
-        } />
-
-        {/* Fallback */}
+        {/* If the user hits 'login', instantly zip them to the dashboard */}
+        <Route path="/login" element={<Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

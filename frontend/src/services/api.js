@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -25,16 +25,21 @@ export const authService = {
     return response.data;
   },
   getMe: () => api.get('/auth/me'),
+  forgotPassword: (email) => api.post(`/auth/forgot-password?email=${email}`),
+  confirmReset: (email, code, newPassword) => api.post(`/auth/confirm-reset?email=${email}&code=${code}&new_password=${newPassword}`),
 };
 
 export const resourceService = {
   list: () => api.get('/resources'),
   stop: (id) => api.post(`/actions/stop?resource_id=${id}`),
+  start: (id) => api.post(`/actions/start?resource_id=${id}`),
+  sync: () => api.post('/actions/sync'),
 };
 
 export const metricService = {
   getLive: () => api.get('/metrics/live'),
   getTimeSeries: (range) => api.get(`/metrics/timeseries?range_days=${range}`),
+  getCostBreakdown: () => api.get('/metrics/cost-breakdown'),
 };
 
 export const reportService = {
