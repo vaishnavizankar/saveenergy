@@ -93,7 +93,7 @@ const Settings = () => {
   return (
     <div className="page-enter">
       <div className="mb-16">
-        <h2 className="text-5xl font-black text-slate-900 tracking-tighter">System Configuration</h2>
+        <h2 className="text-4xl font-black text-slate-900 tracking-tighter">System Configuration</h2>
         <div className="flex items-center gap-4 mt-3">
            <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
              <SettingsIcon size={14} className="text-eco-600" />

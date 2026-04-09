@@ -58,7 +58,7 @@ const Recommendations = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-16 gap-8">
         <div className="max-w-3xl">
           <div className="flex items-center gap-6 mb-4">
-             <h2 className="text-5xl font-black text-slate-900 tracking-tighter">Optimization Core</h2>
+             <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Optimization Core</h2>
              <motion.div 
                animate={{ rotate: [0, 15, -15, 0] }}
                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}

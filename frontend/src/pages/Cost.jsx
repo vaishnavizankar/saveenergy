@@ -82,7 +82,7 @@ const Cost = () => {
     <div className="page-enter">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-12 gap-8">
         <div>
-          <h2 className="text-5xl font-black text-slate-900 tracking-tighter">Cost Intelligence</h2>
+          <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Cost Intelligence</h2>
           <div className="flex items-center gap-4 mt-3">
              <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
                <CreditCard size={14} className="text-blue-500" />
@@ -139,7 +139,7 @@ const Cost = () => {
             <div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{card.title}</p>
               <div className="flex items-baseline gap-2">
-                <h4 className="text-4xl font-black text-slate-900 tracking-tighter tabular-nums">{card.value}</h4>
+                <h4 className="text-3xl font-black text-slate-900 tracking-tighter tabular-nums">{card.value}</h4>
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{card.unit}</span>
               </div>
             </div>
@@ -159,7 +159,7 @@ const Cost = () => {
           <div className="card-premium p-12 bg-white/40">
             <div className="flex items-center justify-between mb-10">
                <div>
-                  <h3 className="text-3xl font-black text-slate-900 tracking-tighter">Cost Distribution</h3>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tighter">Cost Distribution</h3>
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mt-1.5">Consumption by Cloud Service</p>
                </div>
                <div className="p-4 bg-blue-50 text-blue-600 rounded-3xl border border-blue-100">

@@ -55,7 +55,7 @@ const Carbon = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-16 gap-8">
         <div className="max-w-3xl">
           <div className="flex items-center gap-6 mb-4">
-             <h2 className="text-5xl font-black text-slate-900 tracking-tighter">Impact Footprint</h2>
+             <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Impact Footprint</h2>
              <motion.div 
                animate={{ y: [0, -5, 0] }}
                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}

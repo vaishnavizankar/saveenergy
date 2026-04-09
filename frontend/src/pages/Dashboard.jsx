@@ -121,7 +121,7 @@ const Dashboard = () => {
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-12 gap-8">
         <div className="max-w-3xl">
           <div className="flex items-center gap-4 mb-4">
-            <h2 className="text-5xl font-black text-slate-900 tracking-tighter">Eco Intelligence</h2>
+            <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Eco Intelligence</h2>
             <AnimatePresence mode="wait">
               {aiStatus === 'PROVISIONING' ? (
                 <motion.div 
