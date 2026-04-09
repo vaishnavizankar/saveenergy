@@ -43,7 +43,10 @@ const Reports = () => {
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      await api.post('/reports/generate');
+      // Backend expects title as a query parameter
+      await api.post('/reports/generate', null, { 
+        params: { title: `Sustainability Audit ${new Date().toLocaleDateString()}` } 
+      });
       await fetchReports();
     } catch (err) {
       console.error("Report generation failed:", err);

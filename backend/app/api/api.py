@@ -284,43 +284,6 @@ async def apply_recommendation(recommendation_id: int, db: Session = Depends(get
     
     return {"status": "success", "message": f"Recommendation for {res.name} applied successfully!"}
 
-# --- REPORTS ---
-
-@api_router.post("/reports/generate")
-async def generate_report(title: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    # 1. Gather real-time data for the report
-    resources = db.query(AWSResource).all()
-    running_resources = [r for r in resources if r.status == 'running']
-    
-    data = {
-        "total_cost": sum(r.cost_per_hour for r in running_resources),
-        "total_carbon": sum(r.carbon_emissions for r in running_resources),
-        "running_count": len(running_resources),
-        "idle_count": db.query(AWSResource).filter(AWSResource.idle_since != None).count(),
-        "resources": resources,
-        "recommendations": db.query(Recommendation).filter(Recommendation.is_applied == False).limit(5).all()
-    }
-    
-    filename = f"{title.lower().replace(' ', '_')}_{int(datetime.now().timestamp())}.pdf"
-    
-    try:
-        file_path = report_service.generate_sustainability_report(title, data, filename)
-        
-        new_report = Report(
-            title=title,
-            file_path=file_path,
-            generated_at=datetime.now(timezone.utc),
-            created_by=current_user.id
-        )
-        db.add(new_report)
-        db.commit()
-        return {"id": new_report.id, "message": "Report generated successfully", "file": filename}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to generate report: {str(e)}")
-
-@api_router.get("/reports")
-async def get_reports(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return db.query(Report).all()
 
 # --- AWS ACCOUNTS (MULTI-ACCOUNT) ---
 
@@ -377,7 +340,7 @@ async def get_reports(db: Session = Depends(get_db)):
     ]
 
 @api_router.post("/reports/generate")
-async def generate_report(title: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+async def generate_report(title: str = "Sustainability Audit", db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     try:
         # 1. Gather Data for Report
         resources = db.query(AWSResource).all()
