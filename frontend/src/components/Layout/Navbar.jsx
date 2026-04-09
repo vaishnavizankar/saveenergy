@@ -5,13 +5,16 @@ import {
   Search, 
   Clock, 
   LogOut, 
+  Menu,
   ChevronDown,
-  Menu
+  Globe
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = ({ toggleSidebar }) => {
   const [time, setTime] = useState(new Date());
+  const [profileOpen, setProfileOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,54 +28,98 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-8 sticky top-0 z-20 backdrop-blur-md bg-white/80">
-      <div className="flex items-center space-x-4">
+    <header className="h-24 bg-surface-50/80 border-b border-slate-200/60 flex items-center justify-between px-6 md:px-12 sticky top-0 z-30 backdrop-blur-xl">
+      <div className="flex items-center gap-6">
         {/* Mobile Menu Toggle */}
         <button 
           onClick={toggleSidebar}
-          className="lg:hidden p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors"
+          className="lg:hidden p-3 rounded-2xl text-slate-600 hover:bg-slate-100 transition-all border border-slate-200/50 shadow-sm active:scale-95"
         >
-          <Menu size={24} />
+          <Menu size={22} />
         </button>
 
-        <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+        {/* Global Search */}
+        <div className="relative hidden md:flex group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-eco-600 transition-colors" size={18} />
           <input 
             type="text" 
-            placeholder="Search resources, reports..." 
-            className="pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-sm w-64 lg:w-80 focus:ring-2 focus:ring-eco-500/20 transition-all outline-none"
+            placeholder="Search assets, reports, analytics..." 
+            className="pl-12 pr-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm w-80 lg:w-96 focus:ring-8 focus:ring-eco-500/5 focus:border-eco-500/50 shadow-sm transition-all outline-none font-medium placeholder:text-slate-400"
           />
         </div>
       </div>
 
-      <div className="flex items-center space-x-3 md:space-x-6">
-        <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-gray-50 rounded-xl border border-gray-100">
-          <Clock size={14} className="text-gray-400" />
-          <span className="text-xs font-bold text-gray-500 lowercase tracking-tight">
-            {time.toISOString().split('T')[0]} {time.toISOString().split('T')[1].substring(0, 5)} UTC
-          </span>
+      <div className="flex items-center gap-4 lg:gap-8">
+        {/* Platform Status (Desktop) */}
+        <div className="hidden lg:flex items-center gap-4 border-r border-slate-200 pr-8">
+           <div className="flex flex-col items-end">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Current Sync</span>
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                <Clock size={14} className="text-eco-600" />
+                <span>{time.toISOString().split('T')[1].substring(0, 8)} UTC</span>
+              </div>
+           </div>
+           <div className="flex flex-col items-end">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Global Region</span>
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                <Globe size={14} className="text-eco-600" />
+                <span>Multi-Cloud</span>
+              </div>
+           </div>
         </div>
 
-        <button className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-xl transition-colors">
-          <Bell size={20} />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-        </button>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2 md:gap-4">
+          <button className="relative p-3 text-slate-600 hover:bg-white hover:text-eco-600 border border-transparent hover:border-slate-200 rounded-2xl transition-all shadow-hover:shadow-glow-blue group">
+            <Bell size={20} />
+            <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-surface-50 group-hover:scale-110 transition-transform"></span>
+          </button>
 
-        <div className="flex items-center space-x-2 md:space-x-3 group cursor-pointer border-l border-gray-100 pl-3 md:pl-6">
-          <div className="hidden xs:flex flex-col items-end">
-            <span className="text-sm font-bold text-gray-800">Admin User</span>
-            <span className="text-[10px] font-bold text-eco-600 uppercase tracking-tighter">SaveEnergy Admin</span>
-          </div>
           <div className="relative">
-            <div className="w-10 h-10 rounded-xl bg-eco-100 flex items-center justify-center text-eco-600 group-hover:bg-eco-200 transition-colors shadow-sm">
-              <User size={20} />
-            </div>
             <button 
-              onClick={handleLogout}
-              className="absolute -bottom-1 -right-1 bg-white border border-gray-100 p-1 rounded-lg text-red-500 shadow-sm hover:bg-red-50 hover:border-red-100 transition-all"
+              onClick={() => setProfileOpen(!profileOpen)}
+              className="flex items-center gap-3 p-1.5 pr-4 md:bg-white md:border border-slate-200 rounded-2xl transition-all hover:shadow-card active:scale-95 group"
             >
-              <LogOut size={12} />
+              <div className="w-10 h-10 rounded-[14px] bg-gradient-to-br from-eco-100 to-eco-200 flex items-center justify-center text-eco-700 shadow-inner group-hover:scale-105 transition-transform">
+                <User size={20} />
+              </div>
+              <div className="hidden xs:flex flex-col items-start text-left">
+                <span className="text-sm font-bold text-slate-800 leading-none">Admin User</span>
+                <span className="text-[10px] font-bold text-eco-600 uppercase tracking-tighter mt-1">Superuser access</span>
+              </div>
+              <ChevronDown size={14} className={`text-slate-400 transition-transform duration-300 ${profileOpen ? 'rotate-180' : ''}`} />
             </button>
+
+            {/* Profile Dropdown */}
+            <AnimatePresence>
+              {profileOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 mt-3 w-56 glass border border-slate-200 rounded-3xl shadow-elevated p-2 z-50 overflow-hidden"
+                >
+                  <div className="p-4 border-b border-slate-100 mb-1">
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Environment</p>
+                    <p className="text-sm font-bold text-slate-800">Production Mode</p>
+                  </div>
+                  <button 
+                    onClick={() => { setProfileOpen(false); navigate('/settings'); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-2xl transition-all group"
+                  >
+                    <User size={18} className="text-slate-400 group-hover:text-eco-600" />
+                    <span>My Account</span>
+                  </button>
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-2xl transition-all group mt-1"
+                  >
+                    <LogOut size={18} className="text-red-400 group-hover:text-red-600" />
+                    <span>Sign Out</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

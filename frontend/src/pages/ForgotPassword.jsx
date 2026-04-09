@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Leaf, Mail, ArrowRight, ShieldCheck, CheckCircle2, RotateCcw, Key } from 'lucide-react';
+import { Leaf, Mail, ArrowRight, ShieldCheck, CheckCircle2, RotateCcw, Key, ChevronRight, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authService } from '../services/api';
 
@@ -21,7 +21,7 @@ const ForgotPassword = () => {
       await authService.forgotPassword(email);
       setStep(2);
     } catch (err) {
-      setError('Failed to send reset code. Please check your email.');
+      setError('System verification failed. check email formatting.');
     } finally {
       setLoading(false);
     }
@@ -30,7 +30,7 @@ const ForgotPassword = () => {
   const handleConfirmReset = async (e) => {
     e.preventDefault();
     if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters.');
+      setError('Credential intensity low. Use 8+ characters.');
       return;
     }
     setLoading(true);
@@ -40,33 +40,38 @@ const ForgotPassword = () => {
       setStep(3); // Success
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
-      setError('Invalid code or password requirements not met.');
+      setError('Invalid authorization code provided.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden font-inter text-gray-900">
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-eco-100/30 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
+    <div className="min-h-screen bg-surface-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden font-sans text-slate-900 selection:bg-eco-100">
+      {/* Background Glow */}
+      <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-eco-100/30 rounded-full blur-[150px] -translate-x-1/2 -translate-y-1/2 animate-float"></div>
       
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4"
       >
-        <div className="text-center mb-10">
-          <div className="inline-flex bg-white p-5 rounded-[2rem] shadow-2xl shadow-eco-500/10 mb-6 border border-eco-50">
-            <RotateCcw className="text-secondary-600 w-10 h-10" />
+        <div className="text-center mb-12">
+          <motion.div 
+            whileHover={{ rotate: -15, scale: 1.1 }}
+            className="inline-flex bg-white p-6 rounded-[2.5rem] shadow-elevated border border-eco-50 mb-8"
+          >
+            <RotateCcw className="text-eco-600 w-10 h-10" />
+          </motion.div>
+          <h2 className="text-5xl font-black text-slate-900 tracking-tighter mb-4">Vault Recovery</h2>
+          <div className="flex items-center justify-center gap-3">
+             <span className="h-[1px] w-8 bg-slate-200"></span>
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Secure Protocol Reset</p>
+             <span className="h-[1px] w-8 bg-slate-200"></span>
           </div>
-          <h2 className="text-4xl font-black tracking-tight">Recover Access</h2>
-          <p className="mt-3 text-xs font-bold text-gray-400 uppercase tracking-[0.2em] flex items-center justify-center space-x-2">
-            <ShieldCheck size={16} className="text-secondary-500" />
-            <span>Secure Password Recovery Flow</span>
-          </p>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-3xl py-12 px-8 sm:px-12 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.08)] rounded-[3rem] border border-white">
+        <div className="card-premium p-10 md:p-14 bg-white/70">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div 
@@ -75,36 +80,36 @@ const ForgotPassword = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <p className="text-sm text-gray-500 font-medium leading-relaxed mb-8 text-center px-2">
-                  Enter your registered work email. We'll send you a <span className="text-gray-900 font-bold">verification code</span> to reset your access.
+                <p className="text-sm text-slate-500 font-medium leading-relaxed mb-10 text-center px-4">
+                  Enter your registered institutional email. We will dispatch a <span className="text-slate-900 font-black">one-time authorization code</span>.
                 </p>
-                <form className="space-y-6" onSubmit={handleRequestReset}>
+                <form className="space-y-8" onSubmit={handleRequestReset}>
                   <div>
-                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Work Email</label>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Identity Email</label>
                     <div className="relative group">
-                      <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-300 group-focus-within:text-secondary-600 transition-colors">
-                        <Mail size={20} />
+                      <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-300 group-focus-within:text-eco-600 transition-colors">
+                        <Mail size={18} />
                       </div>
                       <input
                         type="email"
                         required
-                        className="block w-full pl-14 pr-4 py-5 bg-white border border-gray-100 rounded-3xl focus:ring-8 focus:ring-secondary-500/5 focus:border-secondary-500 transition-all text-sm font-semibold shadow-sm"
-                        placeholder="name@company.com"
+                        className="input-field w-full pl-16 py-5 rounded-[2rem] bg-white"
+                        placeholder="master@greenops.org"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
                   </div>
-                  {error && <p className="text-red-500 text-[10px] font-black uppercase text-center">{error}</p>}
+                  {error && <p className="text-red-500 text-[10px] font-black uppercase text-center bg-red-50 py-3 rounded-2xl border border-red-100">{error}</p>}
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full flex justify-center items-center py-5 px-6 bg-gray-900 hover:bg-black text-white font-black rounded-3xl shadow-xl transform active:scale-[0.98] transition-all space-x-3 text-sm group"
+                    className="w-full btn-primary py-6 rounded-[2.5rem] bg-slate-900 group"
                   >
                     {loading ? <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> : (
                       <>
-                        <span className="tracking-widest uppercase">SEND CODE</span>
-                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        <span className="relative z-10 text-xs font-black uppercase tracking-[0.3em]">Dispatch Code</span>
+                        <ArrowRight size={18} className="ml-2 group-hover:translate-x-1.5 transition-transform" />
                       </>
                     )}
                   </button>
@@ -119,17 +124,17 @@ const ForgotPassword = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
-                <p className="text-sm text-gray-500 font-medium leading-relaxed mb-8 text-center px-2">
-                  Code sent to <span className="text-gray-900 font-bold">{email}</span>. Please check your inbox and enter the details below.
+                <p className="text-sm text-slate-500 font-medium leading-relaxed mb-10 text-center px-4">
+                  Code transmitted to <span className="text-slate-900 font-black tracking-tight">{email}</span>. Please verify and re-provision credentials.
                 </p>
-                <form className="space-y-6" onSubmit={handleConfirmReset}>
-                  <div className="grid grid-cols-1 gap-5">
+                <form className="space-y-8" onSubmit={handleConfirmReset}>
+                  <div className="space-y-8">
                     <div>
-                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">Verification Code</label>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Authorization Code</label>
                       <input
                         type="text"
                         required
-                        className="block w-full px-6 py-5 bg-white border border-gray-100 rounded-3xl focus:ring-8 focus:ring-secondary-500/5 focus:border-secondary-500 transition-all text-sm font-black text-center tracking-[0.5em] shadow-sm"
+                        className="input-field w-full py-5 rounded-[2rem] bg-white text-center font-black text-lg tracking-[0.8em] placeholder:tracking-normal"
                         placeholder="000000"
                         maxLength={6}
                         value={code}
@@ -137,30 +142,30 @@ const ForgotPassword = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">New Security Password</label>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">New Security Credential</label>
                       <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-300 group-focus-within:text-secondary-600 transition-colors">
-                          <Key size={20} />
+                        <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-300 group-focus-within:text-eco-600 transition-colors">
+                          <Lock size={18} />
                         </div>
                         <input
                           type="password"
                           required
-                          className="block w-full pl-14 pr-4 py-5 bg-white border border-gray-100 rounded-3xl focus:ring-8 focus:ring-secondary-500/5 focus:border-secondary-500 transition-all text-sm font-semibold shadow-sm"
-                          placeholder="••••••••"
+                          className="input-field w-full pl-16 py-5 rounded-[2rem] bg-white"
+                          placeholder="••••••••••••"
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
                         />
                       </div>
                     </div>
                   </div>
-                  {error && <p className="text-red-500 text-[10px] font-black uppercase text-center">{error}</p>}
+                  {error && <p className="text-red-500 text-[10px] font-black uppercase text-center bg-red-50 py-3 rounded-2xl border border-red-100">{error}</p>}
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full flex justify-center items-center py-5 px-6 bg-secondary-600 hover:bg-secondary-700 text-white font-black rounded-3xl shadow-xl transform active:scale-[0.98] transition-all space-x-3 text-sm"
+                    className="w-full btn-primary py-6 rounded-[2.5rem] bg-eco-600 shadow-glow-eco"
                   >
                     {loading ? <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> : (
-                      <span className="tracking-widest uppercase">RESET PASSWORD</span>
+                      <span className="text-xs font-black uppercase tracking-[0.3em]">Re-Provision Access</span>
                     )}
                   </button>
                 </form>
@@ -174,24 +179,29 @@ const ForgotPassword = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center py-8"
               >
-                <div className="inline-flex bg-green-50 p-4 rounded-full mb-6">
-                  <CheckCircle2 size={48} className="text-green-500" />
-                </div>
-                <h3 className="text-2xl font-black text-gray-900 mb-2">Success!</h3>
-                <p className="text-sm font-medium text-gray-500">Your password has been updated. Redirecting you to login...</p>
+                <motion.div 
+                   animate={{ scale: [1, 1.1, 1] }}
+                   transition={{ duration: 2, repeat: Infinity }}
+                   className="inline-flex bg-eco-50 p-6 rounded-full mb-8 border-4 border-white shadow-elevated"
+                >
+                  <CheckCircle2 size={56} className="text-eco-600" />
+                </motion.div>
+                <h3 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">Credentials Synchronized</h3>
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Re-initializing direct login path...</p>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <div className="mt-10 pt-10 border-t border-gray-50 flex justify-center">
-            <Link to="/login" className="text-[10px] font-black text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-[0.2em] flex items-center">
-              Back to Login
+          <div className="mt-12 pt-10 border-t border-slate-50 flex justify-center">
+            <Link to="/login" className="text-[10px] font-black text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-[0.3em] flex items-center group">
+              <ChevronRight size={14} className="rotate-180 mr-2 group-hover:-translate-x-1 transition-transform" />
+              Back to Login Protocol
             </Link>
           </div>
         </div>
         
-        <p className="mt-12 text-center text-[10px] text-gray-300 font-extrabold uppercase tracking-[0.4em]">
-          © 2026 GREENOPS ECO-CORE INFRASTRUCTURE
+        <p className="mt-16 text-center text-[10px] text-slate-300 font-extrabold uppercase tracking-[0.5em]">
+          © 2026 Core Infrastructure. Secure.
         </p>
       </motion.div>
     </div>

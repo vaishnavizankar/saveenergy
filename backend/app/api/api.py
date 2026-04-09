@@ -172,6 +172,18 @@ async def sync_resources(background_tasks: BackgroundTasks, db: Session = Depend
     background_tasks.add_task(sync_aws_inventory)
     return {"status": "success", "message": "Inventory sync started in background!"}
 
+@api_router.delete("/resources/{resource_id}")
+async def delete_resource(resource_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    res = db.query(AWSResource).filter(AWSResource.resource_id == resource_id).first()
+    if not res:
+        raise HTTPException(status_code=404, detail="Resource not found")
+    
+    # Delete associated metric history first
+    db.query(MetricHistory).filter(MetricHistory.resource_id == res.id).delete()
+    db.delete(res)
+    db.commit()
+    return {"status": "success", "message": f"Resource {resource_id} permanently removed."}
+
 # --- METRICS & ANALYTICS ---
 
 async def get_user_account_ids(db: Session, current_user: User) -> List[int]:
@@ -241,6 +253,36 @@ async def get_cost_breakdown(db: Session = Depends(get_db), current_user: User =
 @api_router.get("/recommendations")
 async def get_recommendations(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return db.query(Recommendation).filter(Recommendation.is_applied == False).all()
+
+@api_router.post("/recommendations/{recommendation_id}/apply")
+async def apply_recommendation(recommendation_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    rec = db.query(Recommendation).filter(Recommendation.id == recommendation_id).first()
+    if not rec:
+        raise HTTPException(status_code=404, detail="Recommendation not found")
+    
+    # 1. Get the resource
+    res = db.query(AWSResource).filter(AWSResource.id == rec.resource_db_id).first()
+    if not res:
+        raise HTTPException(status_code=404, detail="Associated resource not found")
+    
+    # 2. Perform the action (Simulation based on action type)
+    if rec.action in ["Stop", "Optimization"]:
+        # Simulate stopping the resource
+        res.status = "stopped"
+        res.idle_since = None
+        res.updated_at = datetime.now(timezone.utc)
+        logger.info(f"Optimization applied: Stopping resource {res.resource_id}")
+    elif rec.action == "Resize":
+        # Simulate resizing
+        res.instance_type = "t3.nano" # Mock downsizing
+        res.updated_at = datetime.now(timezone.utc)
+        logger.info(f"Optimization applied: Resizing resource {res.resource_id}")
+        
+    # 3. Mark recommendation as applied
+    rec.is_applied = True
+    db.commit()
+    
+    return {"status": "success", "message": f"Recommendation for {res.name} applied successfully!"}
 
 # --- REPORTS ---
 

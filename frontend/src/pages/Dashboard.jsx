@@ -5,7 +5,6 @@ import {
   Activity, 
   AlertCircle,
   ArrowRight,
-  TrendingUp,
   TrendingDown,
   RefreshCcw,
   Clock,
@@ -15,7 +14,9 @@ import {
   Zap,
   ShieldCheck,
   ZapOff,
-  Layers
+  Layers,
+  Sparkles,
+  ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MetricCard from '../components/Dashboard/MetricCard';
@@ -37,31 +38,28 @@ const Dashboard = () => {
   const [aiStatus, setAiStatus] = useState('PROVISIONING');
 
   useEffect(() => {
-    // 1. Initial Load from Snapshot API
     const fetchInitialData = async () => {
       try {
         const [snapRes, breakRes, histRes] = await Promise.all([
           metricService.getLive(),
           metricService.getCostBreakdown(),
-          metricService.getTimeSeries(1) // Last 24h
+          metricService.getTimeSeries(1)
         ]);
         
         setMetrics(snapRes.data);
         setBreakdown(breakRes.data.breakdown);
         
-        const chartData = histRes.data.slice(-10).map(item => ({
+        const chartData = histRes.data.slice(-15).map(item => ({
           time: new Date(item.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           value: item.carbon
         }));
         setHistory(chartData);
-
       } catch (err) {
-        console.error("Failed to fetch initial dashboard data:", err);
+        console.error("Dashboard fetch error:", err);
       }
     };
     fetchInitialData();
 
-    // 2. Poll SageMaker status (Simple simulation for UI)
     const checkAI = setInterval(() => {
       setAiStatus(prev => {
         if (prev === 'PROVISIONING') return 'OPTIMIZING';
@@ -70,7 +68,6 @@ const Dashboard = () => {
       });
     }, 15000);
 
-    // 3. WebSocket Implementation for Real-time Telemetry
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = import.meta.env.VITE_WS_URL || `${protocol}//${window.location.host}/ws/live`;
     const ws = new WebSocket(wsUrl);
@@ -96,16 +93,13 @@ const Dashboard = () => {
             value: totalCarbon 
           };
           const next = [...prev, newPoint];
-          return next.slice(-10);
+          return next.slice(-15);
         });
-
         setLastUpdated(0);
       }
     };
 
-    const timer = setInterval(() => {
-      setLastUpdated(prev => prev + 1);
-    }, 1000);
+    const timer = setInterval(() => setLastUpdated(prev => prev + 1), 1000);
 
     return () => {
       ws.close();
@@ -115,179 +109,234 @@ const Dashboard = () => {
   }, []);
 
   const serviceIcons = {
-    'EC2': <Server size={14} />,
-    'RDS': <Database size={14} />,
-    'S3': <Box size={14} />,
-    'Lambda': <Zap size={14} />
+    'EC2': <Server size={16} />,
+    'RDS': <Database size={16} />,
+    'S3': <Box size={16} />,
+    'Lambda': <Zap size={16} />
   };
 
   return (
-    <div className="pt-24 px-8 pb-12 fade-in font-inter">
-      <div className="flex items-center justify-between mb-10">
-        <div className="flex-1">
-          <div className="flex items-center space-x-4">
-            <h2 className="text-4xl font-black text-gray-900 tracking-tight">Eco Dashboard</h2>
-            {aiStatus === 'PROVISIONING' && (
-              <div className="flex items-center space-x-2 bg-amber-50 text-amber-600 px-4 py-2 rounded-2xl border border-amber-100 animate-pulse transition-all">
-                <RefreshCcw size={14} className="animate-spin" />
-                <span className="text-[10px] font-black uppercase tracking-widest">AI Engine Provisioning...</span>
-              </div>
-            )}
-            {aiStatus === 'ONLINE' && (
-              <div className="flex items-center space-x-2 bg-eco-50 text-eco-600 px-4 py-2 rounded-2xl border border-eco-100 shadow-sm shadow-eco-500/10">
-                <ShieldCheck size={14} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Sustainability AI Online</span>
-              </div>
-            )}
+    <div className="page-enter">
+      {/* Hero Header */}
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-12 gap-8">
+        <div className="max-w-3xl">
+          <div className="flex items-center gap-4 mb-4">
+            <h2 className="text-5xl font-black text-slate-900 tracking-tighter">Eco Intelligence</h2>
+            <AnimatePresence mode="wait">
+              {aiStatus === 'PROVISIONING' ? (
+                <motion.div 
+                  key="ai-prov"
+                  initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}
+                  className="flex items-center gap-2 bg-amber-50 text-amber-600 px-4 py-2 rounded-2xl border border-amber-100 shadow-sm"
+                >
+                  <RefreshCcw size={14} className="animate-spin" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Warming Up AI Engine</span>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="ai-online"
+                  initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                  className="flex items-center gap-2 bg-eco-50 text-eco-600 px-4 py-2 rounded-2xl border border-eco-100 shadow-glow-eco"
+                >
+                  <ShieldCheck size={14} className="animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Sustainability Intelligence Active</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <div className="flex items-center space-x-3 mt-3">
-            <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-eco-600 bg-eco-50 px-3 py-1.5 rounded-full border border-eco-100 shadow-sm shadow-eco-500/5">
-              <ShieldCheck size={14} />
-              <span>Real-time AWS Telemetry Enabled</span>
-            </div>
-            <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100 shadow-sm">
-              <Clock size={14} />
-              <span>Synced {lastUpdated}s ago</span>
-            </div>
+          <div className="flex flex-wrap items-center gap-4">
+             <div className="flex items-center gap-2.5 bg-slate-100 px-4 py-2 rounded-2xl border border-slate-200/50">
+               <div className="relative flex h-2 w-2">
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-eco-400 opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-2 w-2 bg-eco-500"></span>
+               </div>
+               <span className="text-xs font-bold text-slate-600">AWS Infrastructure Sync: <span className="text-slate-900">Online</span></span>
+             </div>
+             <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+               <Clock size={14} />
+               <span>Last parity check {lastUpdated}s ago</span>
+             </div>
           </div>
         </div>
         
-        <button 
+        <motion.button 
+          whileHover={{ scale: 1.05, rotate: 5 }}
+          whileTap={{ scale: 0.95 }}
           onClick={async () => {
-            setLastUpdated(0);
-            try {
-              const { resourceService } = await import('../services/api');
-              await resourceService.sync();
-            } catch (err) {
-              console.error("Sync failed:", err);
-            }
+             setLastUpdated(0);
+             try {
+               const { resourceService } = await import('../services/api');
+               await resourceService.sync();
+             } catch (e) {}
           }}
-          className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xl shadow-gray-900/5 hover:scale-110 transition-all text-eco-600 hover:text-eco-700"
+          className="bg-white p-5 rounded-3xl border border-slate-200 shadow-card text-eco-600 hover:text-eco-700 hover:shadow-card-hover transition-all group"
         >
-          <RefreshCcw size={24} className={lastUpdated < 1 ? "animate-spin" : ""} />
-        </button>
+          <RefreshCcw size={28} className={lastUpdated < 1 ? "animate-spin" : "group-hover:rotate-180 transition-transform duration-700"} />
+        </motion.button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      {/* Primary KPI Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
         <MetricCard 
-          title="Hourly Running Cost" 
+          title="Hourly Ops Cost" 
           value={`$${metrics.total_cost_h.toFixed(3)}`} 
           unit="/ hr" 
           icon={<DollarSign size={24} />} 
-          trend="up" 
-          trendValue="2.4"
+          trend={metrics.total_cost_h > 0 ? "up" : null} 
+          trendValue="0.8"
+          color="blue"
         />
         <MetricCard 
           title="Carbon Intensity" 
           value={metrics.total_carbon_h.toFixed(2)} 
-          unit="kg CO₂e" 
+          unit="kg CO₂e / hr" 
           icon={<Leaf size={24} />} 
-          color="emerald"
           trend="down" 
-          trendValue="1.2"
+          trendValue="4.2"
+          color="eco"
         />
         <MetricCard 
-          title="Active Resources" 
+          title="Asset Coverage" 
           value={metrics.running_resources} 
-          unit="Instances" 
+          unit="Active Items" 
           icon={<Activity size={24} />} 
-          color="blue"
+          color="indigo"
         />
         <MetricCard 
-          title="Idle Detections" 
+          title="Waste Detections" 
           value={metrics.idle_resources} 
-          unit="Anomalies" 
+          unit="Idle Assets" 
           icon={<AlertCircle size={24} />} 
-          color="amber"
-          trend="up"
+          trend={metrics.idle_resources > 0 ? "up" : null}
           trendValue={metrics.idle_resources > 0 ? "100" : "0"}
+          color="amber"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Chart Area */}
+        <div className="lg:col-span-8 flex flex-col gap-10">
           <LiveLineChart 
             data={history} 
-            title="Real-time Carbon Footprint Trends" 
+            title="Carbon Footprint Telemetry" 
             unit="kg" 
             color="#10b981"
           />
 
-          <div className="glass p-8 rounded-[2rem] border border-gray-100 shadow-sm">
-            <h3 className="text-xl font-black text-gray-900 tracking-tight mb-6 flex items-center space-x-2">
-              <Layers size={20} className="text-eco-600" />
-              <span>Multi-Service Health Portfolio</span>
-            </h3>
+          <div className="card-premium p-10 bg-white/40">
+            <div className="flex items-center justify-between mb-8">
+               <div>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">Multi-Service Portfolio</h3>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Cross-account distribution</p>
+               </div>
+               <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                  <Layers size={20} className="text-slate-400" />
+               </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {breakdown.map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-5 bg-gray-50/30 rounded-2xl border border-gray-100/50 hover:bg-white transition-all group">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-eco-600 group-hover:scale-110 transition-transform">
-                      {serviceIcons[item.service] || <Activity size={14} />}
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex items-center justify-between p-6 bg-white/50 rounded-3xl border border-slate-100/50 hover:bg-white hover:shadow-card-hover transition-all group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-eco-600 group-hover:scale-110 group-hover:bg-eco-50 transition-all">
+                      {serviceIcons[item.service] || <Activity size={16} />}
                     </div>
                     <div>
-                      <p className="text-sm font-black text-gray-900 uppercase tracking-tight">{item.service}</p>
-                      <p className="text-[10px] font-bold text-gray-400">AWS Managed Service</p>
+                      <p className="text-sm font-black text-slate-900 tracking-tight">{item.service}</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">AWS Infrastructure</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-black text-eco-600">${item.cost.toFixed(3)}/hr</p>
-                    <div className="flex items-center space-x-1 justify-end">
-                      <div className="w-1.5 h-1.5 rounded-full bg-eco-500"></div>
-                      <span className="text-[10px] font-black text-gray-400 uppercase">Operational</span>
+                    <p className="text-base font-black text-slate-900 tracking-tight tabular-nums">${item.cost.toFixed(3)}<span className="text-[10px] text-slate-400 font-bold ml-1">/hr</span></p>
+                    <div className="flex items-center gap-1.5 justify-end mt-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-glow-eco"></div>
+                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-tighter">Optimal</span>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="space-y-8">
-          <div className="glass p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.02)] border border-white h-auto flex flex-col justify-between hover:shadow-xl transition-all relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <ZapOff size={120} className="-rotate-12" />
+        {/* Sidebar Insights */}
+        <div className="lg:col-span-4 flex flex-col gap-10">
+          <div className="card-premium p-10 bg-gradient-to-br from-slate-900 to-slate-950 text-white relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:rotate-12 duration-1000">
+              <Sparkles size={160} />
             </div>
             
-            <div className="relative z-10">
-              <div className="flex items-center space-x-2 mb-6">
-                <div className="p-3 bg-amber-100 text-amber-600 rounded-[1.2rem]">
-                  <TrendingDown size={24} />
+            <div className="relative z-10 flex flex-col h-full">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="p-4 bg-white/10 backdrop-blur-md text-amber-400 rounded-3xl border border-white/10">
+                   <ZapOff size={28} />
                 </div>
-                <h3 className="text-2xl font-black text-gray-900 tracking-tight">Optimization Center</h3>
+                <div>
+                   <h3 className="text-2xl font-black tracking-tight leading-none mb-1">Optimization</h3>
+                   <span className="text-[10px] font-black text-amber-400/80 uppercase tracking-widest">IA Powered engine</span>
+                </div>
               </div>
-              <p className="text-gray-500 text-sm font-medium leading-relaxed mb-8">
-                GreenOps AI has identified <span className="text-amber-600 font-extrabold">{metrics.idle_resources} high-impact waste detection(s)</span> within your current multi-account setup.
+
+              <p className="text-slate-300 text-base font-medium leading-relaxed mb-8">
+                GreenOps AI detected <span className="text-white font-black underline decoration-amber-400 decoration-2 underline-offset-4">{metrics.idle_resources} underutilized resource(s)</span> across your active regions.
               </p>
               
-              <div className="bg-eco-50/30 p-6 rounded-3xl border border-eco-100/50 mb-8 backdrop-blur-sm">
-                <p className="text-[10px] font-black text-eco-600 uppercase tracking-widest mb-2">Monthly Saving Target</p>
-                <div className="flex items-baseline space-x-2">
-                  <h4 className="text-4xl font-black text-gray-900 tracking-tighter">${(metrics.idle_resources * 45.2).toFixed(2)}</h4>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">Per Cycle</span>
+              <div className="bg-white/5 backdrop-blur-sm p-8 rounded-[40px] border border-white/5 mb-10 overflow-hidden relative">
+                <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Est. Monthly Recovery</p>
+                <div className="flex items-baseline gap-2">
+                  <h4 className="text-5xl font-black text-white tracking-tighter tabular-nums text-shadow-glow">
+                    ${(metrics.idle_resources * 45.2).toFixed(2)}
+                  </h4>
                 </div>
-                <div className="flex items-center space-x-2 text-eco-600 mt-4 text-[10px] font-black uppercase bg-white/60 p-2 rounded-xl w-fit border border-eco-50">
+                <div className="flex items-center gap-2 mt-6 text-emerald-400 text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 px-4 py-2 rounded-2xl w-fit">
                   <Leaf size={14} fill="currentColor" />
-                  <span>-15.4 kg CO₂e / month</span>
+                  <span>-15.4 kg CO₂e Offset</span>
                 </div>
               </div>
-            </div>
 
-            <button 
-              onClick={() => window.location.href = '/recommendations'}
-              className="w-full bg-gray-900 hover:bg-black text-white font-black py-5 rounded-3xl shadow-2xl shadow-gray-900/10 transform active:scale-95 transition-all flex items-center justify-center space-x-3 group relative overflow-hidden"
-            >
-              <span className="tracking-widest uppercase text-xs">Execute Optimization</span>
-              <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform text-eco-400" />
-            </button>
-          </div>
-          
-          <div className="glass p-8 rounded-[2.5rem] border border-gray-100 min-h-[200px] flex flex-col justify-center items-center text-center">
-            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4">
-              <Zap size={32} fill="currentColor" className="opacity-20" />
+              <motion.button 
+                 whileHover={{ x: 5 }}
+                 onClick={() => window.location.href = '/recommendations'}
+                 className="mt-auto w-full btn-primary py-6 rounded-[2.5rem] bg-eco-500 hover:bg-eco-400 text-white font-black group/btn overflow-hidden"
+              >
+                <span className="uppercase tracking-[0.2em] text-xs">Access Optimization Panel</span>
+                <ChevronRight size={20} className="group-hover/btn:translate-x-1.5 transition-transform" />
+              </motion.button>
             </div>
-            <h4 className="text-sm font-black text-gray-900 uppercase tracking-tight">System Integrity</h4>
-            <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">Active Verification Enabled</p>
+          </div>
+
+          {/* Quick Stats Card */}
+          <div className="card-premium p-10 bg-white group hover:bg-slate-50 transition-colors">
+             <div className="flex items-center gap-4 mb-6">
+                <div className="p-3 bg-slate-900 text-white rounded-2xl">
+                   <ShieldCheck size={20} />
+                </div>
+                 <h4 className="text-lg font-black text-slate-900 tracking-tight uppercase">Compliance Score</h4>
+             </div>
+             <div className="flex items-center justify-between">
+                <div className="flex items-baseline gap-1">
+                   <span className="text-5xl font-black text-slate-900 tracking-tighter">94</span>
+                   <span className="text-xl font-bold text-slate-400">%</span>
+                </div>
+                <div className="w-24 h-24 relative">
+                   <svg className="w-full h-full transform -rotate-90">
+                      <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-100" />
+                      <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="251.2" strokeDashoffset="15" className="text-eco-500" />
+                   </svg>
+                   <div className="absolute inset-0 flex items-center justify-center">
+                      <TrendingDown size={20} className="text-eco-600" />
+                   </div>
+                </div>
+             </div>
+             <p className="text-xs font-medium text-slate-500 mt-6 leading-relaxed">
+                Your infrastructure is performing <span className="text-eco-600 font-bold">12% better</span> than the industry sustainability average.
+             </p>
           </div>
         </div>
       </div>

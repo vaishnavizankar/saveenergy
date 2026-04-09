@@ -1,109 +1,178 @@
 import React, { useState } from 'react';
-import { Settings as SettingsIcon, User, Bell, Shield, Cloud, CreditCard, ChevronRight } from 'lucide-react';
+import { 
+  Settings as SettingsIcon, 
+  User, 
+  Bell, 
+  Shield, 
+  Key, 
+  Cloud, 
+  CreditCard, 
+  Activity, 
+  Database,
+  Globe,
+  Lock,
+  ChevronRight,
+  Plus,
+  ArrowRight,
+  Smartphone,
+  Mail,
+  Zap,
+  CheckCircle2
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import AWSAccountManager from '../components/Settings/AWSAccountManager';
 
 const Settings = () => {
-  const [activeSection, setActiveSection] = useState('Overview');
+  const [activeTab, setActiveTab] = useState('cloud');
 
-  const sections = [
-    { id: 'Profile', title: 'Profile', icon: <User size={18} />, description: 'Manage your SaveEnergy identity and credentials' },
-    { id: 'Accounts', title: 'Cloud Accounts', icon: <Cloud size={18} />, description: 'Configure AWS IAM roles and billing access' },
-    { id: 'Notifications', title: 'Notifications', icon: <Bell size={18} />, description: 'Setup alerts for idle resources and cost spikes' },
-    { id: 'Compliance', title: 'Compliance', icon: <Shield size={18} />, description: 'Manage sustainability auditing and report frequency' },
-    { id: 'Billing', title: 'Billing', icon: <CreditCard size={18} />, description: 'View SaveEnergy subscription and billing history' },
+  const tabs = [
+    { id: 'profile', name: 'User Identity', icon: <User size={18} /> },
+    { id: 'cloud', name: 'Cloud Integration', icon: <Cloud size={18} /> },
+    { id: 'security', name: 'Identity Protocols', icon: <Shield size={18} /> },
+    { id: 'notifications', name: 'Alert Systems', icon: <Bell size={18} /> },
+    { id: 'billing', name: 'Institutional Billing', icon: <CreditCard size={18} /> },
   ];
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'cloud':
+        return <AWSAccountManager />;
+      case 'profile':
+        return (
+          <div className="space-y-10 py-4 max-w-2xl">
+            <div className="flex items-center gap-10">
+               <div className="relative group">
+                  <div className="w-32 h-32 rounded-[40px] bg-gradient-to-br from-eco-400 to-eco-600 flex items-center justify-center text-white text-4xl font-black shadow-elevated group-hover:scale-105 transition-transform duration-500">
+                    AU
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 p-3 bg-white rounded-2xl shadow-lg border border-slate-100 text-slate-400 hover:text-eco-600 cursor-pointer">
+                     <Smartphone size={16} />
+                  </div>
+               </div>
+               <div>
+                  <h4 className="text-3xl font-black text-slate-900 tracking-tighter mb-1">Admin User</h4>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Master Principal Access</p>
+                  <div className="flex items-center gap-3">
+                     <span className="badge-eco py-1.5 px-4 bg-eco-50 text-eco-700 border-none shadow-sm flex items-center gap-2">
+                        <CheckCircle2 size={12} strokeWidth={3} />
+                        Identity Verified
+                     </span>
+                  </div>
+               </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+               <div className="space-y-3">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Work Identity</label>
+                  <div className="relative group">
+                    <Mail size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-eco-600 transition-colors" />
+                    <input type="text" defaultValue="admin@greenops.internal" className="input-field w-full pl-14" disabled />
+                  </div>
+               </div>
+               <div className="space-y-3">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Protocol Tier</label>
+                  <div className="relative group">
+                    <Zap size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input type="text" defaultValue="Enterprise Enterprise Core" className="input-field w-full pl-14 bg-slate-50 border-none text-slate-500" disabled />
+                  </div>
+               </div>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
+            <Lock size={64} className="text-slate-200 mb-8" strokeWidth={1.5} />
+            <h5 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-2">Protocol Encrypted</h5>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest max-w-[250px]">Modular access to this setting layer is currently restricted by GreenOps Protocol.</p>
+          </div>
+        );
+    }
+  };
+
   return (
-    <div className="pt-24 px-8 pb-12 fade-in font-inter">
-      <div className="flex items-center space-x-3 mb-8">
-        <div className="p-3 bg-white rounded-2xl shadow-sm text-eco-600 border border-gray-100">
-          <SettingsIcon size={24} />
-        </div>
-        <div>
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">System Settings</h2>
-          <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-1">Platform configuration & preferences</p>
+    <div className="page-enter">
+      <div className="mb-16">
+        <h2 className="text-5xl font-black text-slate-900 tracking-tighter">System Configuration</h2>
+        <div className="flex items-center gap-4 mt-3">
+           <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+             <SettingsIcon size={14} className="text-eco-600" />
+             <span className="uppercase tracking-widest text-[10px] font-black">Environmental Variables Secure</span>
+           </div>
+           <span className="h-4 w-[1px] bg-slate-200"></span>
+           <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+             <Activity size={14} />
+             <span className="uppercase tracking-widest text-[10px] font-black">Control Plane v42.0.1</span>
+           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="space-y-4">
-          <button 
-            onClick={() => setActiveSection('Overview')}
-            className={`w-full text-left p-6 rounded-[2.5rem] border transition-all flex items-center justify-between group ${activeSection === 'Overview' ? 'bg-gray-900 text-white border-gray-900 shadow-xl' : 'glass border-gray-100 hover:border-gray-300'}`}
-          >
-            <div className="flex items-center space-x-4">
-              <div className={`p-3 rounded-xl transition-all ${activeSection === 'Overview' ? 'bg-white/10' : 'bg-gray-50 text-gray-400 group-hover:text-eco-600'}`}>
-                <SettingsIcon size={18} />
-              </div>
-              <div>
-                <h4 className="text-sm font-black uppercase tracking-widest">Configuration</h4>
-                <p className={`text-[10px] font-bold ${activeSection === 'Overview' ? 'text-gray-400' : 'text-gray-400'}`}>General settings</p>
-              </div>
-            </div>
-          </button>
-
-          {sections.map((section, i) => (
-            <button 
-              key={i} 
-              onClick={() => setActiveSection(section.id)}
-              className={`w-full text-left p-6 rounded-[2.5rem] border transition-all flex items-center justify-between group ${activeSection === section.id ? 'bg-gray-900 text-white border-gray-900 shadow-xl' : 'glass border-gray-100 hover:border-gray-300'}`}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        {/* Navigation Sidebar */}
+        <div className="lg:col-span-3 space-y-3 px-2">
+          {tabs.map((tab) => (
+            <motion.button
+              key={tab.id}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setActiveTab(tab.id)}
+              className={`w-full flex items-center gap-5 px-8 py-5 rounded-[2.5rem] transition-all relative overflow-hidden group ${
+                activeTab === tab.id 
+                  ? 'bg-slate-900 text-white shadow-elevated' 
+                  : 'text-slate-500 hover:bg-white hover:text-slate-900 border border-transparent hover:border-slate-100 hover:shadow-card'
+              }`}
             >
-              <div className="flex items-center space-x-4">
-                <div className={`p-3 rounded-xl transition-all ${activeSection === section.id ? 'bg-white/10' : 'bg-gray-50 text-gray-400 group-hover:text-eco-600'}`}>
-                  {section.icon}
-                </div>
-                <div>
-                  <h4 className="text-sm font-black uppercase tracking-widest">{section.title}</h4>
-                  <p className={`text-[10px] font-bold ${activeSection === section.id ? 'text-gray-400' : 'text-gray-400'}`}>Global preferences</p>
-                </div>
-              </div>
-              {activeSection !== section.id && <ChevronRight size={16} className="text-gray-300 group-hover:translate-x-1 transition-transform" />}
-            </button>
+              <span className={`${activeTab === tab.id ? 'text-eco-400' : 'text-slate-300 group-hover:text-eco-600'} transition-colors`}>
+                {tab.icon}
+              </span>
+              <span className="text-xs font-black uppercase tracking-widest">{tab.name}</span>
+              {activeTab === tab.id && (
+                <motion.div 
+                  layoutId="settings-active"
+                  className="absolute right-6 w-1.5 h-1.5 rounded-full bg-eco-400 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+                />
+              )}
+            </motion.button>
           ))}
         </div>
 
-        <div className="lg:col-span-2">
-          {activeSection === 'Overview' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {sections.map((section, i) => (
-                <div 
-                  key={i} 
-                  onClick={() => setActiveSection(section.id)}
-                  className="glass p-8 rounded-[2.5rem] border border-gray-100 flex items-center space-x-6 hover:shadow-lg hover:border-eco-100 transition-all cursor-pointer group h-full"
-                >
-                  <div className="p-4 bg-gray-50 text-gray-400 rounded-2xl group-hover:bg-eco-50 group-hover:text-eco-600 transition-all">
-                    {section.icon}
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-extrabold text-gray-900 tracking-tight">{section.title}</h4>
-                    <p className="text-gray-500 text-sm font-medium leading-relaxed">{section.description}</p>
-                  </div>
+        {/* Content Area */}
+        <div className="lg:col-span-9">
+           <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="card-premium p-12 bg-white/60 min-h-[600px] flex flex-col"
+              >
+                <div className="flex items-center justify-between mb-12">
+                   <div>
+                      <h3 className="text-3xl font-black text-slate-900 tracking-tight leading-none uppercase">
+                         {tabs.find(t => t.id === activeTab)?.name}
+                      </h3>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">
+                         Modify global environment parameters and access control.
+                      </p>
+                   </div>
+                   <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100/50">
+                      {tabs.find(t => t.id === activeTab)?.icon}
+                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+                
+                <div className="flex-1">
+                   {renderContent()}
+                </div>
 
-          {activeSection === 'Accounts' && (
-            <div className="fade-in">
-              <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm mb-6">
-                <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Cross-Account IAM Access</h3>
-                <p className="text-gray-500 text-sm font-medium leading-relaxed">
-                  Connect multiple AWS organizations to consolidate your sustainability metrics. Each account requires an IAM Role with a Trust Policy pointing to the SaveEnergy Collector.
-                </p>
-              </div>
-              <AWSAccountManager />
-            </div>
-          )}
-
-          {(activeSection !== 'Overview' && activeSection !== 'Accounts') && (
-            <div className="glass p-12 rounded-[2.5rem] border border-gray-100 flex flex-col items-center justify-center text-center opacity-50 grayscale select-none">
-              <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                <SettingsIcon size={40} className="text-gray-200" />
-              </div>
-              <h4 className="text-2xl font-black text-gray-900 uppercase tracking-tight italic">Coming Soon</h4>
-              <p className="text-gray-400 text-sm font-bold mt-2 uppercase tracking-widest italic font-mono">Module integration in progress</p>
-            </div>
-          )}
+                <div className="mt-16 pt-10 border-t border-slate-50 flex items-center justify-between opacity-50">
+                   <div className="flex items-center gap-3">
+                      <Lock size={14} className="text-slate-300" />
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">End-to-End Environment Sync Active</span>
+                   </div>
+                   <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Modified at {new Date().toLocaleTimeString()} UTC</p>
+                </div>
+              </motion.div>
+           </AnimatePresence>
         </div>
       </div>
     </div>

@@ -34,6 +34,7 @@ export const resourceService = {
   stop: (id) => api.post(`/actions/stop?resource_id=${id}`),
   start: (id) => api.post(`/actions/start?resource_id=${id}`),
   sync: () => api.post('/actions/sync'),
+  remove: (id) => api.delete(`/resources/${id}`),
 };
 
 export const metricService = {

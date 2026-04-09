@@ -1,222 +1,220 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Cloud, 
   Plus, 
   Trash2, 
+  Cloud, 
+  Key, 
   ShieldCheck, 
   AlertCircle, 
-  Loader2,
+  KeyRound, 
+  Database, 
+  Globe,
   RefreshCcw,
-  ExternalLink,
-  ShieldAlert
+  CheckCircle2,
+  Lock,
+  ArrowRight,
+  ChevronRight,
+  Activity
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import api from '../../services/api';
+import { resourceService } from '../../services/api';
 
 const AWSAccountManager = () => {
   const [accounts, setAccounts] = useState([]);
+  const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newAccount, setNewAccount] = useState({ 
-    name: '', 
-    access_key_id: '', 
-    secret_access_key: '', 
-    region: 'us-east-1' 
-  });
-  const [error, setError] = useState(null);
-
-  const fetchAccounts = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/aws-accounts');
-      setAccounts(res.data);
-    } catch (err) {
-      console.error("Failed to fetch accounts", err);
-      setError("Failed to load accounts.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [formData, setFormData] = useState({ name: '', access_key: '', secret_key: '', region: 'us-east-1' });
 
   useEffect(() => {
     fetchAccounts();
   }, []);
 
-  const handleAddAccount = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
+  const fetchAccounts = async () => {
     try {
-      await api.post('/aws-accounts', newAccount);
-      setNewAccount({ name: '', access_key_id: '', secret_access_key: '', region: 'us-east-1' });
-      setShowAddForm(false);
-      fetchAccounts();
+      const res = await resourceService.listAccounts();
+      setAccounts(res.data);
     } catch (err) {
-      setError(err.response?.data?.detail || "Failed to add account. Please check your keys.");
+      console.error("Fetch accounts error:", err);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
-  const handleDeleteAccount = async (id) => {
-    if (!window.confirm("Are you sure? This will disconnect your AWS access.")) return;
+  const handleAdd = async (e) => {
+    e.preventDefault();
     try {
-      await api.delete(`/aws-accounts/${id}`);
+      await resourceService.addAccount(formData);
+      setFormData({ name: '', access_key: '', secret_key: '', region: 'us-east-1' });
+      setIsAdding(false);
       fetchAccounts();
     } catch (err) {
-      console.error("Delete failed", err);
+      alert("Failed to link AWS account. Please verify IAM permissions.");
     }
   };
 
   return (
-    <div className="space-y-8 mt-8">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-black text-gray-900 tracking-tight flex items-center space-x-2">
-          <Cloud size={20} className="text-eco-600" />
-          <span>Your Cloud Connections</span>
-        </h3>
-        <button 
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-gray-900 hover:bg-eco-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center space-x-2 shadow-lg shadow-gray-900/10"
-        >
-          {showAddForm ? <span>Cancel</span> : <><Plus size={16} /><span>Connect Account</span></>}
-        </button>
+    <div className="space-y-10 py-2">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-4">
+         <div>
+            <h4 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Cloud Providers</h4>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Multi-account IAM integration pool</p>
+         </div>
+         <motion.button 
+           whileHover={{ scale: 1.05 }}
+           whileTap={{ scale: 0.95 }}
+           onClick={() => setIsAdding(!isAdding)}
+           className="btn-primary"
+         >
+           <Plus size={18} />
+           <span className="uppercase tracking-[0.15em] text-[10px] font-black">Link New AWS Node</span>
+         </motion.button>
       </div>
 
       <AnimatePresence>
-        {showAddForm && (
+        {isAdding && (
           <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="glass p-8 rounded-[2rem] border-2 border-eco-100 bg-white"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
           >
-            <form onSubmit={handleAddAccount} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Friendly Name</label>
-                  <input 
+            <form onSubmit={handleAdd} className="bg-slate-50/80 rounded-[40px] p-10 border border-slate-200/50 shadow-inner grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Account Identifier</label>
+                <div className="relative group">
+                  <Globe size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-eco-600 transition-colors" />
+                  <input
                     required
-                    type="text" 
-                    placeholder="e.g. Personal-Dev-Account" 
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-eco-500/10 outline-none transition-all"
-                    value={newAccount.name}
-                    onChange={(e) => setNewAccount({...newAccount, name: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">AWS Region</label>
-                  <select 
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-eco-500/10 outline-none transition-all"
-                    value={newAccount.region}
-                    onChange={(e) => setNewAccount({...newAccount, region: e.target.value})}
-                  >
-                    <option value="us-east-1">us-east-1 (N. Virginia)</option>
-                    <option value="us-west-2">us-west-2 (Oregon)</option>
-                    <option value="eu-central-1">eu-central-1 (Frankfurt)</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Access Key ID</label>
-                  <input 
-                    required
-                    type="text" 
-                    placeholder="AKIA..." 
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-eco-500/10 outline-none transition-all"
-                    value={newAccount.access_key_id}
-                    onChange={(e) => setNewAccount({...newAccount, access_key_id: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Secret Access Key</label>
-                  <input 
-                    required
-                    type="password" 
-                    placeholder="Your AWS Secret" 
-                    className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-4 focus:ring-eco-500/10 outline-none transition-all"
-                    value={newAccount.secret_access_key}
-                    onChange={(e) => setNewAccount({...newAccount, secret_access_key: e.target.value})}
+                    placeholder="e.g. Production AWS"
+                    className="input-field w-full pl-14"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
               </div>
-              
-              <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-start space-x-3">
-                <ShieldCheck size={18} className="text-blue-600 mt-0.5" />
-                <p className="text-[10px] text-blue-800 font-bold leading-relaxed uppercase tracking-tight">
-                  Your keys are encrypted using AES-256 before being stored in our database. 
-                  We only use them for read-only resource collection.
-                </p>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Interface Region</label>
+                <select 
+                   className="input-field w-full appearance-none bg-white font-bold"
+                   value={formData.region}
+                   onChange={(e) => setFormData({...formData, region: e.target.value})}
+                >
+                   <option value="us-east-1">US East (N. Virginia)</option>
+                   <option value="us-west-2">US West (Oregon)</option>
+                   <option value="eu-central-1">Europe (Frankfurt)</option>
+                   <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+                </select>
               </div>
-
-              {error && (
-                <div className="p-4 bg-red-50 text-red-600 rounded-2xl border border-red-100 flex items-center space-x-2 text-xs font-black">
-                  <AlertCircle size={16} />
-                  <span>{error}</span>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Access Key ID</label>
+                <div className="relative group">
+                   <KeyRound size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-eco-600 transition-colors" />
+                   <input
+                    required
+                    type="password"
+                    placeholder="AKIA..."
+                    className="input-field w-full pl-14 font-mono tracking-widest"
+                    value={formData.access_key}
+                    onChange={(e) => setFormData({...formData, access_key: e.target.value})}
+                  />
                 </div>
-              )}
-
-              <button 
-                type="submit"
-                disabled={submitting}
-                className="w-full bg-eco-600 hover:bg-eco-700 text-white font-black py-4 rounded-2xl shadow-xl shadow-eco-600/20 flex items-center justify-center space-x-2 transform active:scale-95 transition-all"
-              >
-                {submitting ? <Loader2 size={20} className="animate-spin" /> : <span>Establish Trust Connection</span>}
-              </button>
+              </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Secret Access Key</label>
+                <div className="relative group">
+                   <Lock size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-eco-600 transition-colors" />
+                   <input
+                    required
+                    type="password"
+                    placeholder="••••••••••••••••••••••••"
+                    className="input-field w-full pl-14 font-mono tracking-widest"
+                    value={formData.secret_key}
+                    onChange={(e) => setFormData({...formData, secret_key: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="md:col-span-2 flex items-center justify-end gap-4 mt-6">
+                <button type="button" onClick={() => setIsAdding(false)} className="btn-secondary py-4 px-10">Abort</button>
+                <button type="submit" className="btn-primary py-4 px-10">
+                   <span>Authenticate & Connect</span>
+                   <ChevronRight size={18} />
+                </button>
+              </div>
             </form>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="grid grid-cols-1 gap-4">
-        {loading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 size={32} className="animate-spin text-eco-500" />
-          </div>
-        ) : accounts.length === 0 ? (
-          <div className="glass py-16 rounded-[2.5rem] border-2 border-dashed border-gray-100 flex flex-col items-center justify-center text-center">
-            <div className="p-6 bg-gray-50 rounded-full text-gray-300 mb-4">
-              <Cloud size={48} />
-            </div>
-            <h4 className="text-xl font-extrabold text-gray-900 tracking-tight">No External Accounts Linked</h4>
-            <p className="text-gray-400 text-sm font-medium max-w-xs mt-2">Add an IAM Role ARN to begin monitoring multiple AWS organizations.</p>
-          </div>
-        ) : (
-          accounts.map((acc) => (
-            <div key={acc.id} className="glass p-6 rounded-3xl border border-gray-100 flex items-center justify-between group hover:shadow-md transition-all">
-              <div className="flex items-center space-x-5">
-                <div className="p-4 bg-eco-50 text-eco-600 rounded-2xl group-hover:scale-110 transition-transform shadow-sm">
-                  <ShieldCheck size={24} />
-                </div>
-                <div>
-                  <h4 className="text-lg font-black text-gray-900 tracking-tight">{acc.name}</h4>
-                  <p className="text-[10px] font-mono text-gray-400 uppercase tracking-tighter truncate max-w-md">{acc.role_arn}</p>
-                  <div className="flex items-center space-x-3 mt-1">
-                    <span className="text-[9px] font-black uppercase text-eco-600 bg-eco-50 px-2 py-0.5 rounded-md border border-eco-100">Live Sync</span>
-                    <span className="text-[9px] font-bold text-gray-400 uppercase flex items-center">
-                      <RefreshCcw size={10} className="mr-1" />
-                      Every 5 Minutes
-                    </span>
-                  </div>
-                </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <AnimatePresence>
+          {accounts.map((acc, i) => (
+            <motion.div
+              key={acc.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -5 }}
+              className="p-8 bg-white border border-slate-100 rounded-[35px] shadow-sm hover:shadow-card-hover transition-all group flex flex-col justify-between"
+            >
+              <div className="flex items-start justify-between mb-8">
+                 <div className="flex items-center gap-5">
+                    <div className="p-4 bg-eco-50 text-eco-600 rounded-3xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                       <Cloud size={24} />
+                    </div>
+                    <div>
+                       <h5 className="text-lg font-black text-slate-900 tracking-tight uppercase">{acc.name}</h5>
+                       <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase mt-1">
+                          <Globe size={12} />
+                          <span>{acc.region}</span>
+                       </div>
+                    </div>
+                 </div>
+                 <button 
+                   onClick={async () => { if(confirm("Disconnect this AWS node?")) { await resourceService.removeAccount(acc.id); fetchAccounts(); } }}
+                   className="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
+                 >
+                    <Trash2 size={18} />
+                 </button>
               </div>
-              <div className="flex items-center space-x-3">
-                <button 
-                  className="p-3 text-gray-400 hover:text-eco-600 transition-colors"
-                  title="Test Connection"
-                >
-                  <RefreshCcw size={18} />
-                </button>
-                <button 
-                  onClick={() => handleDeleteAccount(acc.id)}
-                  className="p-3 text-gray-400 hover:text-red-500 transition-colors"
-                  title="Remove Integration"
-                >
-                  <Trash2 size={18} />
-                </button>
+
+              <div className="space-y-4">
+                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100/50">
+                    <div className="flex items-center gap-3">
+                       <Database size={14} className="text-slate-400" />
+                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Inventory Linked</span>
+                    </div>
+                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Total Active Sync</span>
+                 </div>
+                 
+                 <div className="flex items-center justify-between px-2">
+                    <div className="flex items-center gap-2">
+                       <div className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                       </div>
+                       <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Connected</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                       <Activity size={10} />
+                       <span>Last Polled: 02m ago</span>
+                    </div>
+                 </div>
               </div>
-            </div>
-          ))
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        {accounts.length === 0 && !loading && (
+          <div className="col-span-full py-24 text-center border-2 border-dashed border-slate-200 rounded-[50px] bg-slate-50/50 group hover:bg-white transition-all">
+             <div className="w-20 h-20 bg-white shadow-elevated rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                <Lock size={32} className="text-slate-300" />
+             </div>
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">No authenticated AWS providers found in cluster</p>
+             <button onClick={() => setIsAdding(true)} className="mt-6 text-eco-600 text-xs font-black uppercase tracking-widest flex items-center gap-2 mx-auto hover:gap-4 transition-all">
+                Link Initial Node <ArrowRight size={16} />
+             </button>
+          </div>
         )}
       </div>
     </div>

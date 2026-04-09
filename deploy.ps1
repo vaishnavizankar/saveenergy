@@ -11,7 +11,7 @@ param(
 )
 
 $ECR_URL = "$AccountId.dkr.ecr.$Region.amazonaws.com"
-$IMAGE_URI = "$ECR_URL/$RepoName:$Tag"
+$IMAGE_URI = "${ECR_URL}/${RepoName}:${Tag}"
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
@@ -32,7 +32,7 @@ Write-Host "      ECR login successful." -ForegroundColor Green
 # Step 2: Build the Docker image
 Write-Host ""
 Write-Host "[2/4] Building backend Docker image..." -ForegroundColor Yellow
-docker build -t "$RepoName:$Tag" ./backend
+docker build -t "${RepoName}:${Tag}" ./backend
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "ERROR: Docker build failed." -ForegroundColor Red
@@ -43,7 +43,7 @@ Write-Host "      Build successful." -ForegroundColor Green
 # Step 3: Tag the image for ECR
 Write-Host ""
 Write-Host "[3/4] Tagging image for ECR..." -ForegroundColor Yellow
-docker tag "$RepoName:$Tag" $IMAGE_URI
+docker tag "${RepoName}:${Tag}" $IMAGE_URI
 Write-Host "      Tagged as: $IMAGE_URI" -ForegroundColor Green
 
 # Step 4: Push to ECR
