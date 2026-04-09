@@ -86,9 +86,9 @@ const Reports = () => {
         </motion.button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="grid grid-cols-1 gap-12">
         {/* Reports List */}
-        <div className="lg:col-span-8">
+        <div className="lg:col-span-12">
            <div className="card-premium overflow-hidden bg-white/60">
               <div className="p-10 border-b border-slate-100/50 flex items-center justify-between bg-white/40">
                  <div>
@@ -172,32 +172,6 @@ const Reports = () => {
                       <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Vault currently non-populated</p>
                    </div>
                 )}
-              </div>
-           </div>
-        </div>
-
-        {/* Action Panel */}
-        <div className="lg:col-span-4 flex flex-col gap-10">
-
-           <div className="card-premium p-10 bg-white border border-slate-100">
-              <div className="flex items-center gap-4 mb-6">
-                 <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                    <BarChart3 size={20} />
-                 </div>
-                 <h4 className="text-lg font-black text-slate-900 tracking-tight uppercase">Audit Frequency</h4>
-              </div>
-              <p className="text-xs font-medium text-slate-500 leading-relaxed mb-10">
-                 GreenOps automatically initiates a high-resolution sustainability audit every <span className="text-slate-900 font-bold">24 operating hours</span> to ensure institutional transparency.
-              </p>
-              <div className="flex items-center gap-4 group cursor-default">
-                 <div className="flex -space-x-3">
-                    {[1, 2, 3].map(i => (
-                       <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-slate-100 flex items-center justify-center group-hover:scale-110 transition-transform bg-gradient-to-br from-slate-100 to-slate-200">
-                          <CheckCircle2 size={14} className="text-eco-600" />
-                       </div>
-                    ))}
-                 </div>
-                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">3 Reports Pending Review</span>
               </div>
            </div>
         </div>
