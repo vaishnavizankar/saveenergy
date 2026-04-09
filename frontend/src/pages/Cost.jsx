@@ -16,7 +16,8 @@ import {
   ShieldAlert,
   ChevronRight,
   Search,
-  ZapOff
+  ZapOff,
+  Server
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LiveLineChart from '../components/Charts/LiveLineChart';

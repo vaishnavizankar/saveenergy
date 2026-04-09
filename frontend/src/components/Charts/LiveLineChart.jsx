@@ -6,7 +6,10 @@ import {
   XAxis, 
   YAxis, 
   CartesianGrid, 
-  Tooltip
+  Tooltip,
+  Defs,
+  LinearGradient,
+  Stop
 } from 'recharts';
 import { motion } from 'framer-motion';
 
