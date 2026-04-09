@@ -48,5 +48,5 @@ jobs:
         cd frontend
         npm install
         npm run build
-        aws s3 sync dist/ s3://saveenergy-sustainability-frontend --delete
+        aws s3 sync dist/ s3://saveenergy-frontend-production-609a825f --delete
         aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DIST_ID }} --paths "/*"
