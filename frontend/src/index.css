@@ -43,7 +43,7 @@
   }
 
   .card-premium {
-    @apply glass rounded-4xl shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300;
+    @apply glass p-10 rounded-4xl shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300;
   }
 
   .btn-primary {

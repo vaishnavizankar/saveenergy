@@ -213,7 +213,7 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Chart Area */}
         <div className="lg:col-span-8 flex flex-col gap-10">
           <LiveLineChart 
@@ -265,7 +265,7 @@ const Dashboard = () => {
         </div>
 
         {/* Sidebar Insights */}
-        <div className="lg:col-span-4 flex flex-col gap-10">
+        <div className="lg:col-span-4 flex flex-col gap-8">
           <div className="card-premium p-10 bg-gradient-to-br from-slate-900 to-slate-950 text-white relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:rotate-12 duration-1000">
               <Sparkles size={160} />

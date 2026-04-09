@@ -21,7 +21,7 @@ const MetricCard = ({ title, value, unit, icon, trend, trendValue, color = "eco"
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -6 }}
-      className="glass p-8 rounded-5xl shadow-card border border-white hover:border-slate-200 flex flex-col justify-between h-56 transition-all duration-300 group relative overflow-hidden"
+      className="glass p-10 rounded-4xl shadow-card border border-white hover:border-slate-200 flex flex-col justify-between h-64 transition-all duration-300 group relative overflow-hidden"
     >
       {/* Subtle Background Glow */}
       <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 ${currentTheme.bg}`}></div>
