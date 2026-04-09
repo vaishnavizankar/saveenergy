@@ -29,7 +29,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   return (
     <aside className={`fixed inset-y-0 left-0 w-72 sidebar-gradient text-white flex flex-col z-40 transition-all duration-500 ease-in-out transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} shadow-2xl lg:shadow-none border-r border-white/5`}>
       {/* Brand Section */}
-      <div className="p-8 flex items-center justify-between">
+      <div className="p-6 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <motion.div 
             whileHover={{ rotate: 15, scale: 1.1 }}
@@ -51,7 +51,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       </div>
       
       {/* Navigation */}
-      <nav className="flex-1 mt-4 px-4 space-y-2 overflow-y-auto scrollbar-hide py-4">
+      <nav className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-hide py-2">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
           return (
@@ -59,7 +59,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               key={item.name}
               to={item.path}
               onClick={() => setIsOpen(false)}
-              className={`flex items-center group relative px-4 py-4 rounded-2xl transition-all duration-300 ${
+              className={`flex items-center group relative px-4 py-3 rounded-2xl transition-all duration-300 ${
                 isActive 
                   ? 'bg-white/10 text-white shadow-lg' 
                   : 'text-eco-100/60 hover:text-white hover:bg-white/5'

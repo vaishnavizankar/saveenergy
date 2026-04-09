@@ -28,7 +28,7 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <header className="h-24 bg-surface-50/80 border-b border-slate-200/60 flex items-center justify-between px-6 md:px-12 sticky top-0 z-30 backdrop-blur-xl">
+    <header className="h-20 bg-surface-50/80 border-b border-slate-200/60 flex items-center justify-between px-6 md:px-12 sticky top-0 z-30 backdrop-blur-xl">
       <div className="flex items-center gap-6">
         {/* Mobile Menu Toggle */}
         <button 

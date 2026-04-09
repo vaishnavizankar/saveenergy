@@ -28,8 +28,8 @@ const Layout = ({ children }) => {
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-500 ease-in-out">
         <Navbar toggleSidebar={() => setSidebarOpen(true)} />
         
-        <main className="flex-1 lg:ml-72 min-h-screen">
-          <div className="p-4 md:p-10 lg:p-14 max-w-[1600px] mx-auto">
+        <main className="flex-1 lg:ml-72 min-h-[calc(100vh-80px)]">
+          <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -40,7 +40,7 @@ const Layout = ({ children }) => {
           </div>
           
           {/* Footer Branding */}
-          <footer className="mt-20 py-10 px-10 lg:ml-72 border-t border-slate-200/50 bg-white/30 backdrop-blur-sm">
+          <footer className="mt-12 py-8 px-10 lg:ml-72 border-t border-slate-200/50 bg-white/30 backdrop-blur-sm">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 max-w-[1600px] mx-auto">
               <div className="flex items-center gap-4 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
                 <div className="bg-slate-900 p-1.5 rounded-lg text-white">
