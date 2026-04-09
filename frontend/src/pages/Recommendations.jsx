@@ -67,7 +67,7 @@ const Recommendations = () => {
                 <Sparkles className="text-amber-500 w-8 h-8" fill="currentColor" />
              </motion.div>
           </div>
-          <p className="text-slate-500 text-lg font-medium leading-relaxed">
+          <p className="text-slate-500 text-sm font-medium leading-relaxed">
             AI-driven infrastructure intelligence providing validated recommendations to eliminate waste, resize underutilized assets, and optimize your overall cloud footprint.
           </p>
         </div>

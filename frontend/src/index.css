@@ -59,7 +59,7 @@
   }
 
   .badge-eco {
-    @apply px-3 py-1 bg-eco-50 text-eco-700 border border-eco-100 rounded-full text-[10px] font-bold uppercase tracking-widest;
+    @apply px-3 py-1 bg-eco-50 text-eco-700 border border-eco-100 rounded-full text-xs font-bold uppercase tracking-widest;
   }
 }
 
