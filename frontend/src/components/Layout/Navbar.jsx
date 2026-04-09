@@ -38,15 +38,6 @@ const Navbar = ({ toggleSidebar }) => {
           <Menu size={22} />
         </button>
 
-        {/* Global Search */}
-        <div className="relative hidden md:flex group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-eco-600 transition-colors" size={18} />
-          <input 
-            type="text" 
-            placeholder="Search assets, reports, analytics..." 
-            className="pl-12 pr-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm w-80 lg:w-96 focus:ring-8 focus:ring-eco-500/5 focus:border-eco-500/50 shadow-sm transition-all outline-none font-medium placeholder:text-slate-400"
-          />
-        </div>
       </div>
 
       <div className="flex items-center gap-4 lg:gap-8">

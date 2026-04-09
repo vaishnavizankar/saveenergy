@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, TrendingDown, LucideIcon } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const MetricCard = ({ title, value, unit, icon, trend, trendValue, color = "eco" }) => {
