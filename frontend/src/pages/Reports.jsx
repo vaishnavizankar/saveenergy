@@ -178,44 +178,6 @@ const Reports = () => {
 
         {/* Action Panel */}
         <div className="lg:col-span-4 flex flex-col gap-10">
-           <div className="card-premium p-10 bg-slate-900 text-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity scale-150 rotate-12 duration-1000">
-                 <ShieldCheck size={160} />
-              </div>
-              
-              <div className="relative z-10 flex flex-col">
-                 <div className="flex items-center gap-4 mb-8">
-                    <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10">
-                       <Lock size={24} className="text-eco-400" />
-                    </div>
-                    <div>
-                       <h3 className="text-xl font-black uppercase tracking-[0.2em] leading-tight">Compliance Tracking</h3>
-                       <p className="text-[10px] font-black text-eco-400 uppercase tracking-widest mt-1">Audit Protocol V4.2</p>
-                    </div>
-                 </div>
-                 
-                 <div className="space-y-6 mb-12 flex-1">
-                    {[
-                      { label: "Data Integrity Check", status: "Verified", color: "text-emerald-400" },
-                      { label: "AWS Cost Reconciliation", status: "Active", color: "text-blue-400" },
-                      { label: "Grid Intensity Sync", status: "Real-time", color: "text-amber-400" }
-                    ].map((step, i) => (
-                      <div key={i} className="flex items-center justify-between border-b border-white/5 pb-4">
-                         <span className="text-xs font-medium text-slate-400">{step.label}</span>
-                         <span className={`text-[10px] font-black uppercase tracking-widest ${step.color}`}>{step.status}</span>
-                      </div>
-                    ))}
-                 </div>
-
-                 <motion.button 
-                   whileHover={{ x: 5 }}
-                   className="btn-primary w-full py-6 rounded-[2.5rem] bg-eco-600 hover:bg-eco-500 border-none font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 mt-auto"
-                 >
-                    <span>View Analytics Explorer</span>
-                    <ChevronRight size={18} />
-                 </motion.button>
-              </div>
-           </div>
 
            <div className="card-premium p-10 bg-white border border-slate-100">
               <div className="flex items-center gap-4 mb-6">
