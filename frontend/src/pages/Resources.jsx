@@ -145,7 +145,7 @@ const Resources = () => {
     <div className="page-enter">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-12 gap-8">
         <div>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Inventory Control</h2>
+          <h2 className="text-5xl font-black text-slate-900 tracking-tighter">Inventory Control</h2>
           <div className="flex items-center gap-4 mt-3">
              <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
                <Globe size={14} className="text-eco-600" />

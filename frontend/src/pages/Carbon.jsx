@@ -51,146 +51,119 @@ const Carbon = () => {
   }, []);
 
   return (
-    <div className="page-enter">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-16 gap-8">
-        <div className="max-w-3xl">
-          <div className="flex items-center gap-6 mb-4">
-             <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Impact Footprint</h2>
+    <div className="page-enter bg-slate-50/50 min-h-screen">
+      <div className="max-w-[1400px] mx-auto px-6 py-12 lg:px-12">
+        {/* Header Section */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-12 gap-8">
+          <div>
+            <h2 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter">Impact Footprint</h2>
+            <div className="flex items-center gap-4 mt-3">
+               <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                 <Globe size={14} className="text-eco-500" />
+                 <span className="uppercase tracking-widest text-[10px] font-black">Environmental Metrics Active</span>
+               </div>
+               <span className="h-4 w-[1px] bg-slate-200"></span>
+               <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                  <Wind size={14} className="text-blue-400" />
+                  <span className="uppercase tracking-widest text-[10px] font-black">GHG Protocol Compliant</span>
+               </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="bg-white/40 backdrop-blur-md px-6 py-4 rounded-3xl border border-white shadow-sm flex items-center gap-4">
+               <div className="w-12 h-12 rounded-2xl bg-eco-500 flex items-center justify-center text-white shadow-glow-eco">
+                  <Leaf size={20} fill="currentColor" />
+               </div>
+               <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Offset Performance</p>
+                  <p className="text-xl font-black text-slate-900 text-shadow-sm">42.8 <span className="text-xs">kg CO₂e</span></p>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Responsive Grid System */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          {/* Main Content Column */}
+          <div className="lg:col-span-2 space-y-8">
+             <div className="card-premium p-0 overflow-hidden bg-white">
+                <LiveLineChart 
+                  data={history} 
+                  title="Emissions Telemetry (Real-time)" 
+                  unit="kg" 
+                  color="#10b981"
+                />
+             </div>
+
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="card-premium p-8 bg-white border border-slate-100 shadow-sm flex items-center justify-between group overflow-hidden">
+                   <div className="relative z-10">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Portfolio Offset</p>
+                      <h4 className="text-3xl font-black text-slate-900 tracking-tight">32 Trees</h4>
+                      <p className="text-[9px] font-bold text-eco-500 uppercase mt-2">Offset Equivalent</p>
+                   </div>
+                   <div className="p-4 bg-eco-50 text-eco-400 rounded-3xl group-hover:scale-125 transition-transform">
+                      <Trees size={32} />
+                   </div>
+                </div>
+                <div className="card-premium p-8 bg-white border border-slate-100 shadow-sm flex items-center justify-between group overflow-hidden">
+                   <div className="relative z-10">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Energy Balance</p>
+                      <h4 className="text-3xl font-black text-slate-900 tracking-tight">1.2 MWh</h4>
+                      <p className="text-[9px] font-bold text-blue-500 uppercase mt-2">Saved Today</p>
+                   </div>
+                   <div className="p-4 bg-blue-50 text-blue-400 rounded-3xl group-hover:scale-125 transition-transform">
+                      <CloudLightning size={32} />
+                   </div>
+                </div>
+             </div>
+          </div>
+
+          {/* KPI Dashboard Column */}
+          <div className="lg:col-span-1">
              <motion.div 
-               animate={{ y: [0, -5, 0] }}
-               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-               className="p-3 bg-eco-50 border border-eco-100 rounded-2xl shadow-glow-eco"
+                whileHover={{ y: -5 }}
+                className="card-premium p-10 bg-eco-600 text-white relative overflow-hidden h-full flex flex-col justify-between"
              >
-                <Leaf className="text-eco-600 w-8 h-8" fill="currentColor" />
+                <div className="absolute top-0 right-0 p-8 opacity-10">
+                   <Sun size={160} />
+                </div>
+                
+                <div className="relative z-10">
+                   <p className="text-[10px] font-black text-eco-100 uppercase tracking-[0.3em] mb-4 opacity-80">Grid Intensity</p>
+                   <div className="flex items-baseline gap-2 mb-2">
+                      <h4 className="text-7xl font-black tracking-tighter tabular-nums text-shadow-glow">
+                        {liveCarbon.toFixed(2)}
+                      </h4>
+                      <span className="text-xl font-bold text-eco-200">kg</span>
+                   </div>
+                   <p className="text-xs font-black text-eco-100 uppercase tracking-[0.2em] mb-12 opacity-90">CO₂e PER HOUR</p>
+                   
+                   <div className="space-y-6">
+                      <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/10 border border-white/10">
+                         <div className="mt-1"><div className="w-1.5 h-1.5 rounded-full bg-eco-400 shadow-glow-eco"></div></div>
+                         <p className="text-sm font-medium text-eco-50 leading-relaxed">System emissions are <span className="text-white font-black">4.2% lower</span> than the region average.</p>
+                      </div>
+                      <div className="flex items-start gap-4 p-4 rounded-2xl bg-white/10 border border-white/10">
+                         <div className="mt-1"><div className="w-1.5 h-1.5 rounded-full bg-eco-400 shadow-glow-eco"></div></div>
+                         <p className="text-sm font-medium text-eco-50 leading-relaxed">Transitioning to <span className="text-white font-bold underline decoration-eco-300 underline-offset-4">Spot Instances</span> could reduce footprint by 22%.</p>
+                      </div>
+                   </div>
+                </div>
+
+                <motion.button 
+                   whileHover={{ x: 5 }}
+                   className="mt-12 w-full p-6 rounded-[2rem] bg-white text-eco-600 font-black flex items-center justify-between group shadow-xl"
+                >
+                   <span className="uppercase tracking-[0.2em] text-[10px]">Impact Roadmap</span>
+                   <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </motion.button>
              </motion.div>
           </div>
-          <p className="text-slate-500 text-lg font-medium leading-relaxed">
-            Real-time monitoring of global grid carbon intensity and your operational CO₂e emissions across all active AWS region clusters.
-          </p>
+
         </div>
-        
-        <div className="flex gap-4">
-            <div className="glass px-8 py-5 rounded-[40px] shadow-sm border border-white flex flex-col items-center justify-center text-center">
-               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Global Intensity</span>
-               <div className="flex items-center gap-2">
-                  <span className="text-2xl font-black text-slate-900">421</span>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">gCO₂/kWh</span>
-               </div>
-            </div>
-            <div className="glass px-8 py-5 rounded-[40px] shadow-sm border border-white flex flex-col items-center justify-center text-center">
-               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Grid Health</span>
-               <div className="flex items-center gap-2">
-                  <Sun size={14} className="text-amber-500" />
-                  <span className="text-sm font-bold text-slate-700">62% Renewable</span>
-               </div>
-            </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-16">
-        <div className="lg:col-span-8">
-          <LiveLineChart 
-            data={history} 
-            title="Emission Trajectory (kg CO₂e)" 
-            unit="kg" 
-            color="#10b981"
-          />
-        </div>
-
-        <div className="lg:col-span-4 flex flex-col gap-10">
-          <motion.div 
-             whileHover={{ scale: 1.02 }}
-             className="card-premium p-10 bg-gradient-to-br from-eco-500 to-eco-600 text-white relative overflow-hidden h-full flex flex-col justify-center items-center text-center"
-          >
-            {/* Background pattern */}
-            <div className="absolute inset-0 opacity-10 mix-blend-overlay">
-               <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                  <path d="M0 100 Q 50 0 100 100" stroke="white" strokeWidth="2" fill="transparent" />
-                  <path d="M0 80 Q 50 10 100 80" stroke="white" strokeWidth="1" fill="transparent" />
-               </svg>
-            </div>
-
-            <div className="relative z-10 flex flex-col items-center">
-              <p className="text-[11px] font-black text-eco-100 uppercase tracking-[0.3em] mb-4 opacity-80">Live Transmission Rate</p>
-              <div className="flex items-baseline gap-2 mb-2">
-                 <h4 className="text-7xl font-black tracking-tighter tabular-nums drop-shadow-lg">
-                   {liveCarbon.toFixed(2)}
-                 </h4>
-              </div>
-              <p className="text-xs font-black text-eco-100 uppercase tracking-[0.2em] mb-10 opacity-90">kg CO₂e per hour</p>
-              
-              <div className="bg-white/10 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/20 flex items-center gap-3">
-                <div className="flex items-center gap-1.5 text-eco-100">
-                   <TrendingDown size={16} />
-                   <span className="text-[10px] font-extrabold uppercase tracking-widest">-4.2% Optimization Impact</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Quick Insights Sub-cards */}
-          <div className="grid grid-cols-2 gap-6">
-             <div className="card-premium p-6 bg-white hover:bg-emerald-50 transition-colors group">
-                <div className="p-3 bg-emerald-100 text-emerald-600 rounded-2xl w-fit mb-4 group-hover:scale-110 transition-transform">
-                   <Trees size={20} />
-                </div>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Offset Equivalent</p>
-                <p className="text-lg font-black text-slate-900 tracking-tight">32 Trees</p>
-             </div>
-             <div className="card-premium p-6 bg-white hover:bg-blue-50 transition-colors group">
-                <div className="p-3 bg-blue-100 text-blue-600 rounded-2xl w-fit mb-4 group-hover:scale-110 transition-transform">
-                   <CloudLightning size={20} />
-                </div>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Energy Saving</p>
-                <p className="text-lg font-black text-slate-900 tracking-tight">1.2 MWh</p>
-             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Region-wise Breakdown */}
-      <div className="card-premium p-12 bg-white/40">
-         <div className="flex items-center justify-between mb-10">
-            <div>
-               <h3 className="text-3xl font-black text-slate-900 tracking-tighter">Geographical Intensity</h3>
-               <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mt-1.5 leading-none">Global cluster distribution analytics</p>
-            </div>
-            <div className="badge-eco py-2 px-6">
-               <Activity size={12} className="inline mr-2" />
-               Live AWS API Probe
-            </div>
-         </div>
-         
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { region: 'us-east-1', intensity: 'High Intensity', value: 480, color: 'text-amber-500', bg: 'bg-amber-50', icon: <MapPin size={16} /> },
-              { region: 'us-west-2', intensity: 'Renewable Heavy', value: 210, color: 'text-eco-600', bg: 'bg-eco-50', icon: <Wind size={16} /> },
-              { region: 'eu-central-1', intensity: 'Mixed Grid', value: 340, color: 'text-blue-500', bg: 'bg-blue-50', icon: <CloudRain size={16} /> },
-              { region: 'ap-south-1', intensity: 'Carbon Intense', value: 590, color: 'text-red-500', bg: 'bg-red-50', icon: <CloudLightning size={16} /> },
-            ].map((item, i) => (
-              <motion.div 
-                key={i} 
-                whileHover={{ y: -5 }}
-                className="p-8 bg-white border border-slate-100 rounded-[35px] shadow-sm hover:shadow-card-hover transition-all"
-              >
-                 <div className="flex items-center gap-3 mb-6">
-                    <div className={`p-3 rounded-2xl ${item.bg} ${item.color}`}>
-                       {item.icon}
-                    </div>
-                    <p className="font-black text-slate-900 tracking-tight uppercase text-sm">{item.region}</p>
-                 </div>
-                 <div className="space-y-4">
-                    <div className="flex justify-between items-baseline">
-                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Intensity Status</span>
-                       <span className={`text-[10px] font-black uppercase ${item.color}`}>{item.intensity}</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
-                       <div className={`h-full opacity-60 ${item.color.replace('text', 'bg')}`} style={{ width: `${(item.value / 600) * 100}%` }}></div>
-                    </div>
-                 </div>
-              </motion.div>
-            ))}
-         </div>
       </div>
     </div>
   );

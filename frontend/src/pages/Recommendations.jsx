@@ -58,7 +58,7 @@ const Recommendations = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-16 gap-8">
         <div className="max-w-3xl">
           <div className="flex items-center gap-6 mb-4">
-             <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Optimization Core</h2>
+             <h2 className="text-5xl font-black text-slate-900 tracking-tighter">Optimization Core</h2>
              <motion.div 
                animate={{ rotate: [0, 15, -15, 0] }}
                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -67,7 +67,7 @@ const Recommendations = () => {
                 <Sparkles className="text-amber-500 w-8 h-8" fill="currentColor" />
              </motion.div>
           </div>
-          <p className="text-slate-500 text-sm font-medium leading-relaxed">
+          <p className="text-slate-500 text-lg font-medium leading-relaxed">
             AI-driven infrastructure intelligence providing validated recommendations to eliminate waste, resize underutilized assets, and optimize your overall cloud footprint.
           </p>
         </div>
@@ -166,11 +166,10 @@ const Recommendations = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleExecute(rec.id)}
-                  className="w-full btn-primary bg-slate-900 hover:bg-eco-600 text-white font-black py-5 rounded-3xl shadow-xl transition-all flex items-center justify-center gap-3 overflow-hidden relative group/btn"
+                  className="w-full btn-primary bg-slate-900 hover:bg-emerald-600 text-white font-black py-5 rounded-3xl shadow-xl transition-all flex items-center justify-center gap-3 overflow-hidden relative group/btn uppercase tracking-widest text-xs"
                 >
-                  <span className="uppercase tracking-[0.2em] text-xs">Execute AI Optimization</span>
-                  <MousePointerClick size={18} className="group-hover/btn:rotate-12 transition-transform" />
-                  <div className="absolute inset-0 bg-white/10 translate-x-full group-hover/btn:translate-x-0 transition-transform duration-500"></div>
+                   <CheckCircle2 size={18} className="group-hover/btn:scale-125 transition-transform" />
+                   <span>Apply Recommendation</span>
                 </motion.button>
                 <div className="flex items-center justify-center gap-2 mt-5 text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">
                    <Clock size={12} className="opacity-60" />

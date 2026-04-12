@@ -43,9 +43,15 @@ const Reports = () => {
   const handleGenerate = async () => {
     setGenerating(true);
     try {
+      // Create a clean date-time string
+      const now = new Date();
+      const dateString = now.toLocaleDateString().replace(/\//g, '-');
+      const timeString = now.toLocaleTimeString().replace(/:/g, '-');
+      const titleStr = `Sustainability_Audit_${dateString}_${timeString}`;
+
       // Backend expects title as a query parameter
       await api.post('/reports/generate', null, { 
-        params: { title: `Sustainability Audit ${new Date().toLocaleDateString()}` } 
+        params: { title: titleStr } 
       });
       await fetchReports();
     } catch (err) {
@@ -60,18 +66,7 @@ const Reports = () => {
     <div className="page-enter">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-16 gap-8">
         <div>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Compliance Vault</h2>
-          <div className="flex items-center gap-4 mt-3">
-             <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
-               <Lock size={14} className="text-eco-600" />
-               <span className="uppercase tracking-widest text-[10px] font-black">Cryptographic Authenticity Guaranteed</span>
-             </div>
-             <span className="h-4 w-[1px] bg-slate-200"></span>
-             <div className="badge-eco px-4 py-1.5 flex items-center gap-2">
-                <CheckCircle2 size={12} strokeWidth={3} />
-                <span>Auditor Ready</span>
-             </div>
-          </div>
+          <h2 className="text-5xl font-black text-slate-900 tracking-tighter">Compliance Vault</h2>
         </div>
         
         <motion.button 
@@ -86,7 +81,7 @@ const Reports = () => {
         </motion.button>
       </div>
 
-      <div className="grid grid-cols-1 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Reports List */}
         <div className="lg:col-span-12">
            <div className="card-premium overflow-hidden bg-white/60">
@@ -127,7 +122,7 @@ const Reports = () => {
                                   <FileText size={18} />
                                </div>
                                <div>
-                                  <p className="text-sm font-black text-slate-900 tracking-tight">{report.name || `Sustainability_Audit_${report.date}`}</p>
+                                  <p className="text-sm font-black text-slate-900 tracking-tight">{report.title}</p>
                                   <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-0.5">
                                      <HardDrive size={10} />
                                      <span>2.4 MB · Application/PDF</span>
@@ -137,8 +132,7 @@ const Reports = () => {
                           </td>
                           <td>
                             <div className="flex flex-col">
-                               <span className="text-xs font-black text-slate-700">{report.date}</span>
-                               <span className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-tighter">UTC Archive</span>
+                               <span className="text-xs font-black text-slate-700">{new Date(report.generated_at).toLocaleString()}</span>
                             </div>
                           </td>
                           <td>
@@ -175,6 +169,7 @@ const Reports = () => {
               </div>
            </div>
         </div>
+
       </div>
     </div>
   );

@@ -41,6 +41,7 @@ export const metricService = {
   getLive: () => api.get('/metrics/live'),
   getTimeSeries: (range) => api.get(`/metrics/timeseries?range_days=${range}`),
   getCostBreakdown: () => api.get('/metrics/cost-breakdown'),
+  getIAMBilling: () => api.get('/metrics/iam-billing'),
 };
 
 export const reportService = {

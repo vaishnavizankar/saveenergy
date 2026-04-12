@@ -37,7 +37,6 @@ const Navbar = ({ toggleSidebar }) => {
         >
           <Menu size={22} />
         </button>
-
       </div>
 
       <div className="flex items-center gap-4 lg:gap-8">
@@ -47,38 +46,24 @@ const Navbar = ({ toggleSidebar }) => {
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Current Sync</span>
               <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
                 <Clock size={14} className="text-eco-600" />
-                <span>{time.toISOString().split('T')[1].substring(0, 8)} UTC</span>
+                <span>{time.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false })} IST</span>
               </div>
-           </div>
-           <div className="flex flex-col items-end">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Global Region</span>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
-                <Globe size={14} className="text-eco-600" />
-                <span>Multi-Cloud</span>
-              </div>
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1 opacity-70">
+                {time.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' })}
+              </span>
            </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 md:gap-4">
-          <button className="relative p-3 text-slate-600 hover:bg-white hover:text-eco-600 border border-transparent hover:border-slate-200 rounded-2xl transition-all shadow-hover:shadow-glow-blue group">
-            <Bell size={20} />
-            <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-surface-50 group-hover:scale-110 transition-transform"></span>
-          </button>
-
           <div className="relative">
             <button 
               onClick={() => setProfileOpen(!profileOpen)}
-              className="flex items-center gap-3 p-1.5 pr-4 md:bg-white md:border border-slate-200 rounded-2xl transition-all hover:shadow-card active:scale-95 group"
+              className="flex items-center p-1.5 md:bg-white md:border border-slate-200 rounded-2xl transition-all hover:shadow-card active:scale-95 group"
             >
               <div className="w-10 h-10 rounded-[14px] bg-gradient-to-br from-eco-100 to-eco-200 flex items-center justify-center text-eco-700 shadow-inner group-hover:scale-105 transition-transform">
                 <User size={20} />
               </div>
-              <div className="hidden xs:flex flex-col items-start text-left">
-                <span className="text-sm font-bold text-slate-800 leading-none">Admin User</span>
-                <span className="text-[10px] font-bold text-eco-600 uppercase tracking-tighter mt-1">Superuser access</span>
-              </div>
-              <ChevronDown size={14} className={`text-slate-400 transition-transform duration-300 ${profileOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {/* Profile Dropdown */}

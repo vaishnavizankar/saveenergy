@@ -43,7 +43,7 @@
   }
 
   .card-premium {
-    @apply glass p-10 rounded-4xl shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300;
+    @apply glass rounded-4xl shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300;
   }
 
   .btn-primary {
@@ -59,7 +59,7 @@
   }
 
   .badge-eco {
-    @apply px-3 py-1 bg-eco-50 text-eco-700 border border-eco-100 rounded-full text-xs font-bold uppercase tracking-widest;
+    @apply px-3 py-1 bg-eco-50 text-eco-700 border border-eco-100 rounded-full text-[10px] font-bold uppercase tracking-widest;
   }
 }
 

@@ -52,6 +52,24 @@ const AWSAccountManager = () => {
     }
   };
 
+  const handleAddInitialNode = async () => {
+    setLoading(true);
+    try {
+      await resourceService.addAccount({
+        name: 'Production AWS',
+        access_key_id: 'REPLACED_FOR_GITHUB',
+        secret_access_key: 'REPLACED_FOR_GITHUB',
+        region: 'us-east-1'
+      });
+      fetchAccounts();
+    } catch (err) {
+      alert("Failed to Auto-Link AWS account. Trying manual form...");
+      setIsAdding(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-10 py-2">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-4">
@@ -211,7 +229,7 @@ const AWSAccountManager = () => {
                 <Lock size={32} className="text-slate-300" />
              </div>
              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">No authenticated AWS providers found in cluster</p>
-             <button onClick={() => setIsAdding(true)} className="mt-6 text-eco-600 text-xs font-black uppercase tracking-widest flex items-center gap-2 mx-auto hover:gap-4 transition-all">
+             <button onClick={handleAddInitialNode} className="mt-6 text-eco-600 text-xs font-black uppercase tracking-widest flex items-center gap-2 mx-auto hover:gap-4 transition-all">
                 Link Initial Node <ArrowRight size={16} />
              </button>
           </div>

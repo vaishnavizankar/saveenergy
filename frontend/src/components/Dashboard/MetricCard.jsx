@@ -2,7 +2,7 @@ import React from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const MetricCard = ({ title, value, unit, icon, trend, trendValue, color = "eco" }) => {
+const MetricCard = ({ title, value, unit, icon, trend, trendValue, color = "eco", onClick }) => {
   const isPositive = trend === 'up';
   
   // Dynamic color mapping based on design tokens
@@ -20,8 +20,9 @@ const MetricCard = ({ title, value, unit, icon, trend, trendValue, color = "eco"
     <motion.div 
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -6 }}
-      className="glass p-10 rounded-4xl shadow-card border border-white hover:border-slate-200 flex flex-col justify-between h-64 transition-all duration-300 group relative overflow-hidden"
+      whileHover={{ y: -6, scale: onClick ? 1.02 : 1 }}
+      onClick={onClick}
+      className={`glass p-8 rounded-5xl shadow-card border border-white hover:border-slate-200 flex flex-col justify-between h-56 transition-all duration-300 group relative overflow-hidden ${onClick ? 'cursor-pointer hover:shadow-card-hover' : ''}`}
     >
       {/* Subtle Background Glow */}
       <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 ${currentTheme.bg}`}></div>

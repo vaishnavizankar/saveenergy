@@ -248,6 +248,41 @@ async def get_cost_breakdown(db: Session = Depends(get_db), current_user: User =
         "anomalies": aws_service.get_cost_anomalies()
     }
 
+@api_router.get("/metrics/iam-billing")
+async def get_iam_billing(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    user_accounts = db.query(AWSAccount).filter(AWSAccount.owner_id == current_user.id).all()
+    if not user_accounts:
+        raise HTTPException(status_code=400, detail="No IAM accounts connected.")
+    
+    total_hourly_cost = 0.0
+    for acc in user_accounts:
+        try:
+            session = aws_service.account_manager.get_session(
+                role_arn=acc.role_arn,
+                access_key=acc.access_key_id,
+                secret_key=acc.secret_access_key,
+                region=acc.region
+            )
+            ce = session.client('ce')
+            end_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+            start_date = (datetime.now(timezone.utc) - timedelta(days=1)).strftime('%Y-%m-%d')
+            
+            response = ce.get_cost_and_usage(
+                TimePeriod={'Start': start_date, 'End': end_date},
+                Granularity='DAILY',
+                Metrics=['UnblendedCost']
+            )
+            
+            # Convert recent daily unblended cost to hourly
+            daily_cost = sum(float(x['Total']['UnblendedCost']['Amount']) for x in response.get('ResultsByTime', []))
+            total_hourly_cost += (daily_cost / 24.0)
+            
+        except Exception as e:
+            logger.error(f"Cost fetching failed for IAM {acc.name}: {e}")
+            raise HTTPException(status_code=403, detail=f"IAM Permission Error: {str(e)}")
+            
+    return {"status": "success", "iam_hourly_cost": total_hourly_cost}
+
 # --- RECOMMENDATIONS ---
 
 @api_router.get("/recommendations")

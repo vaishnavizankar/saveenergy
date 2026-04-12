@@ -129,6 +129,8 @@ resource "aws_ecs_task_definition" "backend_task" {
         { name = "ALGORITHM",                   value = "HS256" },
         { name = "ACCESS_TOKEN_EXPIRE_MINUTES", value = "10080" },
         { name = "AWS_REGION",                  value = "us-east-1" },
+        { name = "AWS_ACCESS_KEY_ID",           value = "REPLACED_FOR_GITHUB" },
+        { name = "AWS_SECRET_ACCESS_KEY",       value = "REPLACED_FOR_GITHUB" },
         { name = "AWS_COGNITO_USER_POOL_ID",    value = "us-east-1_GNxIumfQJ" },
         { name = "AWS_COGNITO_CLIENT_ID",       value = "4n86iijadkp6lgcfuagp753oat" },
         { name = "MONITOR_INTERVAL_SECONDS",    value = "15" },

@@ -56,11 +56,14 @@ const LiveLineChart = ({ data, color = "#16a34a", title, unit }) => {
             <YAxis 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fontSize: 10, fontWeight: 800, fill: '#94a3b8', letteringSpacing: '0.05em' }}
+              tick={{ fontSize: 10, fontWeight: 800, fill: '#94a3b8' }}
               domain={[0, 'auto']}
-              unit={unit}
+              tickFormatter={(val) => {
+                if (unit === '₹') return `₹${val.toLocaleString('en-IN')}`;
+                return `${val.toFixed(val < 1 ? 3 : 1)} ${unit}`;
+              }}
               allowDecimals={true}
-              width={60}
+              width={80}
             />
             <Tooltip 
               cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: '4 4' }}
